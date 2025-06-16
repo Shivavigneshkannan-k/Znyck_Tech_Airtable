@@ -5,11 +5,20 @@ import SignupPage from "./Pages/Signup";
 import ErrorPage from "./Pages/Error";
 import { Toaster } from "react-hot-toast";
 import ProfilePage from "./Pages/ProfilePage";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
+import TableCreator from "./Pages/TablePage";
+import { useEffect } from "react";
+import { getUser } from "./store/userThunks";
 const App = () => {
   const user = useSelector(store => store.user.user);
+  const dispatch = useDispatch();
+  useEffect(()=>{
+    if(!user){
+      dispatch(getUser())
+    }
+  },[])
   return (
     <>
       <div><Toaster/></div>
@@ -21,7 +30,6 @@ const App = () => {
           <Route path="/profile" element={user ? <ProfilePage /> :<Navigate to="/login" replace />} />
           <Route path="*" element={<ErrorPage />} />
       </Routes>
-      <Footer />
       </>
   );
 };

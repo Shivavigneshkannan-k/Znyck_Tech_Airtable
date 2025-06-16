@@ -1,7 +1,9 @@
-import React from "react";
+import TablePage from "./TablePage";
 
 const Home = () => {
-  return <div>Home</div>;
+  return <div>
+    <TablePage/>
+  </div>;
 };
 
 export default Home;

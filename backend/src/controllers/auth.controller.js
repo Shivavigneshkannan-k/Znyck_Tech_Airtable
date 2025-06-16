@@ -35,7 +35,7 @@ const register = async (req, res, next) => {
     .status(201)
     .cookie("jwtToken", jwtToken, {
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "none",
+      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 8* 1000 // 8 hours
     })
@@ -54,7 +54,7 @@ const logIn = async (req, res, next) => {
     .status(200)
     .cookie("jwtToken", jwtToken, {
       httpOnly: true,
-      sameSite: process.env.NODE_ENV == "production" ? "strict" : "none",
+      sameSite: process.env.NODE_ENV == "production" ? "strict" : "lax",
       secure: process.env.NODE_ENV == "production",
       maxAge: 60 * 60 * 8000
     })
@@ -67,7 +67,7 @@ const logout = async (req, res, next) => {
     .status(200)
     .cookie("jwtToken", null, {
       httpOnly: true,
-      sameSite: process.env.NODE_ENV == "production" ? "strict" : "none",
+      sameSite: process.env.NODE_ENV == "production" ? "strict" : "lax",
       secure: process.env.NODE_ENV == "production",
       expires: new Date(Date.now())
     })
