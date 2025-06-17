@@ -1,5 +1,11 @@
 @import "tailwindcss";
 @plugin "daisyui";
+.input-field {
+  @apply fieldset-legend py-1 px-2 outline-0
+}
+.option-btn{
+  @apply flex gap-2 justify-center items-center opacity-80 cursor-pointer text-sm p-2 active:text-blue-500
+}
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

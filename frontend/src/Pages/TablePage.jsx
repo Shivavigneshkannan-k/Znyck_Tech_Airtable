@@ -1,16 +1,20 @@
-import React, { useState } from "react";
-import { addNewField, handleFieldChange } from "../utils/Table.util.js";
+import { useState } from "react";
+import { addNewField} from "../utils/Table.util.js";
 import FieldTab from "../Components/FieldTab.jsx";
+import { FormContext } from "../context/form.context.js";
 
 const TablePage = () => {
   const [tableName, setTableName] = useState("New Table");
+  useState(()=>{
+    console.log("rendered")
+  })
   const [fields, setFields] = useState([
     {
       name: "",
       type: "text",
-      options: [],
       required: false,
-      unique: false
+      unique: false,
+      options: {}
     }
   ]);
   console.log(fields);
@@ -21,24 +25,26 @@ const TablePage = () => {
         className='m-5 p-4 w-fit rounded-lg shadow-2xl '
         onSubmit={(e) => e.preventDefault()}>
         <input
-          className='fieldset-legend outline-0 text-2xl mx-auto'
+          className='fieldset-legend outline-0 text-2xl text-center w-full'
           placeholder='New Table'
           value={tableName.toUpperCase()}
           onChange={(e) => setTableName(e.target.value)}
         />
-        {fields &&
-          fields.map((field, index) => (
-            <FieldTab
-              key={index}
-              field={field}
-              index={index}
-              handleFieldChange={handleFieldChange}
-              setFields={setFields}
-            />
-          ))}
+
+        <FormContext.Provider value={{ fields, setFields }}>
+          {fields &&
+            fields.map((field, index) => (
+              <FieldTab
+                key={index}
+                field={field}
+                index={index}
+              />
+            ))}
+        </FormContext.Provider>
+
         <button
           className='btn my-2'
-          onClick={() => addNewField(setFields)}>
+          onClick={() => addNewField(fields,setFields)}>
           Add Field
         </button>
       </form>
