@@ -2,11 +2,12 @@ import Options from "./Options";
 import { fieldTypes, handleFieldChange} from "../utils/Table.util";
 import { useFormContext } from "../context/form.context";
 
-const FieldTab = ({ field, index}) => {
-  const {setFields} = useFormContext();
+const FieldTab = ({index}) => {
+  const {setFields,fields} = useFormContext();
+  const field = fields[index];
   return (
 
-    <div>
+    <div className=" rounded-lg p-5 top-[1/2] right-[1/2] bg-slate-950  text-white my-2 ">
       <div className='flex gap-4 p-4 justify-between items-center my-2'>
 
         <input type='text' className='fieldset-legend border-0 outline-0' name='name'

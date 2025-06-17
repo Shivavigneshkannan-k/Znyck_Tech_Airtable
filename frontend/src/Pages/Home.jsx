@@ -1,7 +1,7 @@
 import TablePage from "./TablePage";
 
 const Home = () => {
-  return <div>
+  return <div className="relative">
     <TablePage/>
   </div>;
 };

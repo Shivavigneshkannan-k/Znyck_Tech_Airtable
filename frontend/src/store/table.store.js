@@ -39,10 +39,10 @@ const tableSlice = createSlice({
     ]
   },
   reducers: {
-    // createNewTable: (state, action) => {
-    //     state.tables.push(state.tableFormat);
-    // }
+    createNewTable: (state, action) => {
+        state.tables.push(action.payload);
+    }
   }
 });
-
+export const {createNewTable} = tableSlice.actions;
 export default tableSlice.reducer;
