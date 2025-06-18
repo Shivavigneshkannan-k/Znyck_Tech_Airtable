@@ -6,22 +6,21 @@ const TableView = () => {
   const { fields, setActiveTab } = useFormContext();
   const [row, setRow] = useState([]);
   const [format, setFormat] = useState([]);
-  console.log(fields)
+  console.log(row);
   useEffect(() => {
-    const rowData = fields.map((field) => {
+    const rowData = fields.map((field,i) => {
       return {
-        name: field.name,
+        fieldName: field?.name,
         value: "",
         type: field.type,
         fieldId: field?.fieldId
       };
     });
-    setFormat(rowData);
-    
-    
+    setFormat([...rowData]);
+    console.log("render")
   }, [fields]);
 
-  useEffect(()=>{
+  useEffect(() => {
     setRow((prev) => {
       const state = [...prev];
       const newState = state.map((rows) => {
@@ -31,24 +30,25 @@ const TableView = () => {
         });
         format.forEach((item) => {
           if (!rowMap.has(item.fieldId)) {
-            rowMap.set(item.fieldId,item);
-            
+            rowMap.set(item.fieldId, item);
+          }
+          else{
+            const existing = rowMap.get(item.fieldId);
+            rowMap.set(item.fieldId,{...existing,...item,value:(item.value)?item.value:existing.value});
           }
         });
         return Array.from(rowMap.values());
       });
       return newState;
     });
-    ;
-  },[format,fields])
+  }, [format, fields]);
 
   const updateRow = (e, rowIndex, fieldIndex) => {
-    console.log(rowIndex, fieldIndex);
     setRow((prev) => {
       const state = [...prev];
       state[rowIndex][fieldIndex] = {
         ...state[rowIndex][fieldIndex],
-        value: e.target.value
+        value: e.target.value,
       };
       return state;
     });
