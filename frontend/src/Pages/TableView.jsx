@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "../context/form.context";
 import { CirclePlus, Pencil } from "lucide-react";
+import toast from "react-hot-toast";
 
 const TableView = () => {
   const { fields, setActiveTab } = useFormContext();
@@ -8,18 +9,26 @@ const TableView = () => {
   const [format, setFormat] = useState([]);
   useEffect(() => {
     const rowData = fields.map((field) => {
-      return { name: field.name, value: "", type: field.type };
+      return {
+        name: field.name,
+        value: "",
+        type: field.type,
+      };
     });
     setFormat(rowData);
+    console.log(fields)
   }, [fields]);
   const updateRow = (e, rowIndex, fieldIndex) => {
+    console.log(rowIndex,fieldIndex)
     setRow((prev) => {
-      const rows = [...prev];
-      rows[rowIndex][fieldIndex] = {...rows[rowIndex][fieldIndex],value:e.target.value};
-      return rows
+      const state = [...prev];
+      state[rowIndex][fieldIndex] = {
+        ...state[rowIndex][fieldIndex],
+        value: e.target.value
+      };
+      return state;
     });
   };
-  console.log(row);
   return (
     <div className='overflow-x-auto mx-4'>
       <table className='table'>
@@ -55,8 +64,8 @@ const TableView = () => {
                         type={fields[fieldIndex].type}
                         placeholder={fields[fieldIndex].type + " value"}
                         className='input'
-                        value={row[rowIndex][fieldIndex]["value"]}
-                        onChange={(e)=>updateRow(e,rowIndex,fieldIndex)}
+                        value={row[rowIndex][fieldIndex]?.value || ""}
+                        onChange={(e) => updateRow(e, rowIndex, fieldIndex)}
                       />
                     </th>
                   ))}
@@ -68,7 +77,17 @@ const TableView = () => {
         className='btn'
         onClick={(e) => {
           e.preventDefault();
-          setRow((prev) => [...prev, format]);
+          if (
+            fields.some(
+              (field) => !field.name || (field.name && field.name.trim() === "")
+            )
+          ) {
+            const _message =
+              "fill all field name and its type before trying to add any data";
+            toast.error(_message);
+            throw new Error(_message);
+          }
+          setRow((prev) => [...prev,format.map(f=>({...f}))]); //deep clone for reusing format 
         }}>
         New Row
       </button>
