@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid";
 export const handleFieldChange = (e, index, setFields) => {
   const { name, type, value, checked } = e.target;
   setFields((prev) => {
@@ -11,8 +12,8 @@ export const handleFieldChange = (e, index, setFields) => {
 };
 
 export const fieldTypes = [
-  "integer",
   "text",
+  "integer",
   "date",
   "boolean",
   "decimal",
@@ -32,14 +33,24 @@ export const fieldFormat = {
   type: "text",
   required: false,
   unique: false,
+  fieldId: nanoid(),
   options: {}
 };
 
 // adding new field into the table
 export const addNewField = (fields, setFields) => {
   setFields((prev) => {
-    console.log(prev);
-    return [...prev, fieldFormat];
+    return [
+      ...prev,
+      {
+        name: "",
+        type: "text",
+        required: false,
+        unique: false,
+        fieldId: nanoid(),
+        options: {}
+      }
+    ];
   });
 };
 

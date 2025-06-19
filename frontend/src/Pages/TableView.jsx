@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "../context/form.context";
 import { CirclePlus, Pencil } from "lucide-react";
+import toast from "react-hot-toast";
+import TableInput from "../Components/TableInput";
 
 const TableView = () => {
-  const { fields, setActiveTab } = useFormContext();
-  const [row, setRow] = useState([]);
+  const { fields, setActiveTab,setRow,row } = useFormContext();
+  
+
   const [format, setFormat] = useState([]);
-  console.log(row);
   useEffect(() => {
-    const rowData = fields.map((field,i) => {
+    const rowData = fields.map((field) => {
       return {
         fieldName: field?.name,
         value: "",
@@ -17,7 +19,7 @@ const TableView = () => {
       };
     });
     setFormat([...rowData]);
-    console.log("render")
+    console.log("render");
   }, [fields]);
 
   useEffect(() => {
@@ -31,10 +33,13 @@ const TableView = () => {
         format.forEach((item) => {
           if (!rowMap.has(item.fieldId)) {
             rowMap.set(item.fieldId, item);
-          }
-          else{
+          } else {
             const existing = rowMap.get(item.fieldId);
-            rowMap.set(item.fieldId,{...existing,...item,value:(item.value)?item.value:existing.value});
+            rowMap.set(item.fieldId, {
+              ...existing,
+              ...item,
+              value: item.value ? item.value : existing.value
+            });
           }
         });
         return Array.from(rowMap.values());
@@ -43,16 +48,7 @@ const TableView = () => {
     });
   }, [format, fields]);
 
-  const updateRow = (e, rowIndex, fieldIndex) => {
-    setRow((prev) => {
-      const state = [...prev];
-      state[rowIndex][fieldIndex] = {
-        ...state[rowIndex][fieldIndex],
-        value: e.target.value,
-      };
-      return state;
-    });
-  };
+  
   return (
     <div className='overflow-x-auto mx-4'>
       <table className='table'>
@@ -81,17 +77,7 @@ const TableView = () => {
               <tr key={rowIndex}>
                 {fields &&
                   fields.map((_, fieldIndex) => (
-                    <th
-                      className=' '
-                      key={fieldIndex}>
-                      <input
-                        type={fields[fieldIndex].type}
-                        placeholder={fields[fieldIndex].type + " value"}
-                        className='input'
-                        value={row[rowIndex][fieldIndex]?.value || ""}
-                        onChange={(e) => updateRow(e, rowIndex, fieldIndex)}
-                      />
-                    </th>
+                    <TableInput key={fieldIndex} fieldIndex={fieldIndex} rowIndex={rowIndex} row = {row} setRow={setRow}/>
                   ))}
               </tr>
             ))}
@@ -101,16 +87,16 @@ const TableView = () => {
         className='btn'
         onClick={(e) => {
           e.preventDefault();
-          // if (
-          //   fields.some(
-          //     (field) => !field.name || (field.name && field.name.trim() === "")
-          //   )
-          // ) {
-          //   const _message =
-          //     "fill all field name and its type before trying to add any data";
-          //   toast.error(_message);
-          //   throw new Error(_message);
-          // }
+          if (
+            fields.some(
+              (field) => !field.name || (field.name && field.name.trim() === "")
+            )
+          ) {
+            const _message =
+              "fill all field name and its type before trying to add any data";
+            toast.error(_message);
+            throw new Error(_message);
+          }
           setRow((prev) => [...prev, format.map((f) => ({ ...f }))]); //deep clone for reusing format
         }}>
         New Row

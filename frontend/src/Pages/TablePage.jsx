@@ -7,23 +7,26 @@ import { Pencil } from "lucide-react";
 import {useDispatch} from "react-redux"
 import { createNewTable } from "../store/table.store.js";
 import toast from "react-hot-toast"
+import { nanoid } from "nanoid";
 
 const TablePage = () => {
   const [tableName, setTableName] = useState("New Table");
   const [activeTab, setActiveTab] = useState(null);
   const dispatch = useDispatch()
+  const [row, setRow] = useState([]);
   const [fields, setFields] = useState([
     {
-      name: "",
+      name: "username",
       type: "text",
       required: false,
       unique: false,
-      options: {}
+      fieldId: nanoid(),
+      options: {},
     }
   ]);
   const saveTable = ()=>{
     toast("successfully added")
-    dispatch(createNewTable({tableName,fields}));
+    dispatch(createNewTable({tableName,fields,tableData:row}));
   }
   return (
     <div className='p-5 '>
@@ -43,13 +46,13 @@ const TablePage = () => {
           </div>
 
         {activeTab!==null  && (
-          <FormContext.Provider value={{ setActiveTab, fields, setFields }}>
+          <FormContext.Provider value={{ setActiveTab, fields, setFields ,row,setRow}}>
             <FieldTab index={activeTab} />
           </FormContext.Provider>
         )}
 
         <div className='flex'>
-          <FormContext.Provider value={{ setActiveTab, fields, setFields }}>
+          <FormContext.Provider value={{ setActiveTab, fields, setFields,row,setRow }}>
             <TableView />
           </FormContext.Provider>
 

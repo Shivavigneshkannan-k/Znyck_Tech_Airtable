@@ -1,6 +1,13 @@
-{
-    "tableName":"",
-    "fields":[
-        
-    ]
-}
+[
+  { "name": "username", "type": "text", "value": "shiva" },
+  { "name": "emailId", "type": "text", "value": "shiva@gmail.com" },
+  { "name": "phoneNumber", "type": "number", "value": "9159869717" }
+]
+
+
+[
+  { "name": "username", "type": "text", "value": "" },
+  { "name": "emailId", "type": "text", "value": "" },
+  { "name": "phoneNumber", "type": "number", "value": "" }
+  { "name": "dob", "date": "number", "value": "" }
+]

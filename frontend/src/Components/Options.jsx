@@ -47,9 +47,11 @@ const Options = ({ type, index }) => {
     setActiveTab(null);
   setFields((prev) => prev.filter((_, i) => i !== index));
   };
+  // not in use now but used in onclick of save button
+
   const saveField = () => {
     setFields((prev) => {
-      const state = prev;
+      const state = [...prev];
       state[index] = {
         ...state[index],
         options: {
@@ -97,7 +99,7 @@ const Options = ({ type, index }) => {
           </div>
         )}
       </div>
-      <button className='btn mx-2' onClick={saveField}>
+      <button className='btn mx-2' onClick={()=>{saveField()}}>
         Save
       </button>
       <button className='btn mx-2' onClick={deleteField}>
