@@ -3,7 +3,7 @@ import { useFormContext } from "../context/form.context";
 import AddOptions, { AddOptionButton } from "./AddOptions";
 
 const Options = ({ type, index }) => {
-  const { fields, setFields, setActiveTab, row, setRow } = useFormContext();
+  const { fields, setFields, setActiveTab, setRow } = useFormContext();
   const [hide, setHide] = useState(true);
   const [choice, setChoice] = useState([]);
 

@@ -25,6 +25,7 @@ const validateSignUp = (req,res,next)=>{
 
 const validateLogin = async (req, res, next) => {
   try {
+    console.log(req.body)
     const emailId = req?.body?.emailId?.toLowerCase();
     const password = req?.body?.password;
     

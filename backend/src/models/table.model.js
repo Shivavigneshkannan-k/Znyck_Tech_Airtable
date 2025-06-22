@@ -5,7 +5,7 @@ const fieldSchema = new mongoose.Schema(
     name: { type: String, required: true },
     type: { type: String, required: true },
     choices: [String],
-    default: { type: mongoose.Schema.type.mixed }
+    default: { type: mongoose.Schema.Types.Mixed }
   },
   { timestamps: true }
 );
@@ -13,7 +13,7 @@ const fieldSchema = new mongoose.Schema(
 const tableSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, default: "Untitled" },
-    userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: User },
+    userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
     fields: [fieldSchema]
   },
   { timestamps: true }

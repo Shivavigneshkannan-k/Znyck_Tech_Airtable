@@ -1,0 +1,33 @@
+{
+    "tableDummyData": {
+        "name": "user",
+        "userId": "1dre2s35dhf131",
+        "fields": [
+            {
+                "name": "username",
+                "type": "string"
+            },
+            {
+                "name": "progress",
+                "type": "string",
+                "choices": ["pending", "todo", "done"],
+                "default": "todo"
+            },
+            {
+                "name": "email",
+                "type": "email",
+                "choices": [],
+                "default": null
+            }
+        ]
+    },
+    
+    "rowInput": {
+        "tableId": "685835a06384a9e35aa922cc",
+        "values": {
+            "username": "john_doe",
+            "progress": "todo",
+            "email": ""
+        }
+    }
+}

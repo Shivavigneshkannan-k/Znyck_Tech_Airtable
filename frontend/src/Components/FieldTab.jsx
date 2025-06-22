@@ -15,7 +15,7 @@ const FieldTab = ({index}) => {
           value={field.name} placeholder={`Field ${index + 1}`} />
 
         <select
-          className=' border px-4 py-1'
+          className=' border px-4 py-1 bg-base-200'
           name='type'
           onChange={(e) => handleFieldChange(e, index, setFields)}>
           {fieldTypes &&
