@@ -16,16 +16,12 @@ const createTable = async (req, res, next) => {
   res.status(201).json(response);
 };
 
-const addField = async (req,res,next) =>{
-    const {tableId,fieldData} = req.body;
-    const user = req.user;
 
-    const table = await Table.findOne({_id:tableId,userId:user._id});
-    if (!table) {
-      throw new ApiError("Table Not Found",404);
-    }
-    +
+const getTables = async (req, res, next) => {
+  const user = req.user;
+  const tables = await Table.find({ userId: user._id });
+  const response = new ApiResponse("successfully fetched tables", tables, 200);
+  res.status(200).json(response);
+};
 
 
-
-}
