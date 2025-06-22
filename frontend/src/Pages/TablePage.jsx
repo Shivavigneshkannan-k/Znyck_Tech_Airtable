@@ -3,33 +3,38 @@ import { addNewField, tableTemplate } from "../utils/Table.util.js";
 import FieldTab from "../Components/FieldTab.jsx";
 import { FormContext } from "../context/form.context.js";
 import TableView from "./TableView.jsx";
-import { Pencil } from "lucide-react";
-import { useDispatch } from "react-redux";
-import { createNewTable } from "../store/table.store.js";
+import { useDispatch, useSelector } from "react-redux";
+import { updateTable } from "../store/table.store.js";
 import toast from "react-hot-toast";
 import { nanoid } from "nanoid";
+import { useParams } from "react-router";
 
 const TablePage = () => {
-  const [tableMetaData, setTableMetaData] = useState({
-    name: "New Table",
-    id: nanoid()
-  });
+  const {tableIndex} = useParams();
+  const tables = useSelector((store) => store.table.tables);
+  const tableData = tableIndex >= 0 ? tables[tableIndex] : {};
+  console.log("tables", tables[tableIndex]);
+  const [tableMetaData, setTableMetaData] = useState(
+    tableData?.tableMetaData || {
+      name: "New Table",
+      id: nanoid()
+    }
+  );
   const [activeTab, setActiveTab] = useState(null);
   const dispatch = useDispatch();
-  const [row, setRow] = useState([]);
-  const [fields, setFields] = useState([]);
+  const [row, setRow] = useState(tableData?.tableData || []);
+  const [fields, setFields] = useState(tableData?.fields || []);
   useEffect(() => {
     if (fields.length == 0) {
-      setFields((prev) => {
+      setFields(() => {
         return tableTemplate.map((field) => ({ ...field, fieldId: nanoid() }));
       });
     }
   }, []);
-
-  console.log("fields", fields);
+  console.log(tableMetaData)
   const saveTable = () => {
-    toast("successfully added");
-    dispatch(createNewTable({ tableMetaData, fields, tableData: row }));
+    dispatch(updateTable({ tableMetaData, fields, tableData: row,tableIndex:tableIndex }));
+    toast.success("Table saved successfully");
   };
   return (
     <div className='p-5 '>

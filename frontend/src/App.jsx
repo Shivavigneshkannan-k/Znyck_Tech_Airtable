@@ -11,6 +11,8 @@ import Footer from "./Components/Footer";
 import TableCreator from "./Pages/TablePage";
 import { useEffect } from "react";
 import { getUser } from "./store/userThunks";
+import ViewTables from "./Pages/ViewTables";
+import TablePage from "./Pages/TablePage";
 const App = () => {
   const user = useSelector(store => store.user.user);
   const dispatch = useDispatch();
@@ -24,10 +26,10 @@ const App = () => {
       <div><Toaster/></div>
       <Navbar/>
       <Routes>
-          <Route path="/" element={user ? <HomePage /> :<Navigate to="/login" replace />} />
+          <Route path="/" element={user ? <ViewTables /> :<Navigate to="/login" replace />} />
+          <Route path="/table/:tableIndex" element={user ? <TablePage/> :<Navigate to="/login" replace />} />
           <Route path="/login" element={!user ? <LoginPage /> :<Navigate to="/" replace />} />
           <Route path="/signup" element={!user ? <SignupPage /> :<Navigate to="/" replace />} />
-          <Route path="/profile" element={user ? <ProfilePage /> :<Navigate to="/login" replace />} />
           <Route path="*" element={<ErrorPage />} />
       </Routes>
       </>

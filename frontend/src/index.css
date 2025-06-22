@@ -6,6 +6,9 @@
 .option-btn{
   @apply flex gap-2 justify-center items-center opacity-80 cursor-pointer text-sm p-2 active:text-blue-500
 }
+.bg-table {
+  @apply background-image: url('https://res.cloudinary.com/dhsiaedxk/image/upload/v1750569515/Screenshot_2025-06-22_104138_gxswkz.png');  background-size: cover; background-position: center;
+}
 /* :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

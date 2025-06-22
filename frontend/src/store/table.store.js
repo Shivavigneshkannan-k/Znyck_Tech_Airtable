@@ -6,12 +6,19 @@ const tableSlice = createSlice({
     tables: [],
   },
   reducers: {
-    createNewTable: (state, action) => {
-        state.tables.push(action.payload);
+    updateTable: (state, action) => {
+        const tableData = action.payload;
+        const tableIndex = tableData?.tableIndex;
+        if(tableIndex!=-1 && tableIndex<state.tables.length){
+          state.tables[tableIndex] = tableData;
+        }
+        else{
+          state.tables.push(tableData);
+        }
     }
   }
 });
-export const {createNewTable} = tableSlice.actions;
+export const {updateTable} = tableSlice.actions;
 export default tableSlice.reducer;
 
 // tableFormat: {

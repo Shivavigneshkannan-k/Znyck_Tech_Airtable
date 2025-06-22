@@ -91,7 +91,6 @@ const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
 
 const TableInput = ({ rowIndex, fieldIndex, row, setRow }) => {
   const { fields } = useFormContext();
-  console.log(row);
   const updateRow = (e, rowIndex, fieldIndex) => {
     setRow((prev) => {
       const state = [...prev];
