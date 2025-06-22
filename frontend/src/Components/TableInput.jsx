@@ -64,7 +64,7 @@ const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
         </div>
         <ul
           tabIndex={0}
-          className='dropdown-content menu rounded-box z-1 bg-base-300 shadow-sm absolute w-fit '>
+          className='dropdown-content menu rounded-box z-1  shadow-sm absolute w-fit '>
           {choices &&
             choices.map((choice, idx) => {
               return (

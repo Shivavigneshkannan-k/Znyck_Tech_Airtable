@@ -23,6 +23,8 @@ app.use(
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
+
+
 app.use("/", (req, res) => {
   res.status(404).json({ success: false, message: "No such api" });
 });

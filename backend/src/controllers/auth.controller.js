@@ -47,7 +47,6 @@ const logIn = async (req, res, next) => {
   delete user?.password;
   const user_id = user?._id
   const jwtToken = await jwt.sign({user_id},process.env.PRIVATE_KEY,{expiresIn:"1h"});
-  console.log(jwtToken);
   const response = new ApiResponse("successfully logged in",user, 200);
 
   res

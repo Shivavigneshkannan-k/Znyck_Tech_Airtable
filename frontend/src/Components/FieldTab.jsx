@@ -7,7 +7,7 @@ const FieldTab = ({index}) => {
   const field = fields[index];
   return (
 
-    <div className=" rounded-lg p-5 top-[1/2] right-[1/2] bg-slate-950  text-white my-2 ">
+    <div className=" rounded-lg p-5 top-[1/2] right-[1/2] my-2 shadow-md ">
       <div className='flex gap-4 p-4 justify-between items-center my-2'>
 
         <input type='text' className='fieldset-legend border-0 outline-0' name='name'
@@ -15,7 +15,7 @@ const FieldTab = ({index}) => {
           value={field.name} placeholder={`Field ${index + 1}`} />
 
         <select
-          className='bg-base-200 border px-4 py-1'
+          className=' border px-4 py-1'
           name='type'
           onChange={(e) => handleFieldChange(e, index, setFields)}>
           {fieldTypes &&
