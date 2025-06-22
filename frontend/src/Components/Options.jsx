@@ -3,7 +3,7 @@ import { useFormContext } from "../context/form.context";
 import AddOptions, { AddOptionButton } from "./AddOptions";
 
 const Options = ({ type, index }) => {
-  const { fields, setFields,setActiveTab } = useFormContext();
+  const { fields, setFields, setActiveTab, row, setRow } = useFormContext();
   const [hide, setHide] = useState(true);
   const [choice, setChoice] = useState([]);
 
@@ -28,7 +28,7 @@ const Options = ({ type, index }) => {
       return state;
     });
   }, [type]);
-  
+
   const handleChange = (e) => {
     let { name, value } = e.target;
     setFields((prev) => {
@@ -45,7 +45,18 @@ const Options = ({ type, index }) => {
   };
   const deleteField = () => {
     setActiveTab(null);
-  setFields((prev) => prev.filter((_, i) => i !== index));
+    setRow((prev)=>{
+      const state = [...prev];
+      console.log("state", state);
+      const result = state.map((r)=>{
+        return r.filter((_, i) => i !== index);
+      })
+      console.log("result", result);
+      return result
+    })
+    setFields((prev) => prev.filter((_, i) => i !== index));
+
+    
   };
   // not in use now but used in onclick of save button
 
@@ -89,20 +100,31 @@ const Options = ({ type, index }) => {
 
         {isDropdown && (
           <div>
-            <AddOptionButton setChoice={setChoice}/>
+            <AddOptionButton setChoice={setChoice} />
             {choice &&
               choice.map((c, i) => {
                 return (
-                  <AddOptions i={i} choice={choice || []} setChoice={setChoice} key={i}/>
+                  <AddOptions
+                    i={i}
+                    choice={choice || []}
+                    setChoice={setChoice}
+                    key={i}
+                  />
                 );
               })}
           </div>
         )}
       </div>
-      <button className='btn mx-2' onClick={()=>{saveField()}}>
+      <button
+        className='btn mx-2'
+        onClick={() => {
+          saveField();
+        }}>
         Save
       </button>
-      <button className='btn mx-2' onClick={deleteField}>
+      <button
+        className='btn mx-2'
+        onClick={deleteField}>
         delete
       </button>
     </div>

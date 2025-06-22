@@ -65,3 +65,37 @@ export const filterOption = (type) =>
     //   return !["min", "max"].includes(option);
     // }
   });
+
+export const tableTemplate = [
+  {
+    name: "Name",
+    type: "text",
+    required: false,
+    unique: false,
+    options: {}
+  },
+  {
+    name: "Note",
+    type: "text",
+    required: false,
+    unique: false,
+    options: {}
+  },
+  {
+    name: "Email",
+    type: "email",
+    required: false,
+    unique: false,
+    options: {}
+  },
+  {
+    name: "Status",
+    type: "single select",
+    required: false,
+    unique: false,
+    options: {
+      choices:["pending","done","in-progress"],
+      default: "pending"
+    }
+  },
+];

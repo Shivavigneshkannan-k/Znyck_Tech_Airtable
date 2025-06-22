@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useFormContext } from "../context/form.context";
-import { CirclePlus, Pencil } from "lucide-react";
+import { CirclePlus, Pencil, Trash } from "lucide-react";
 import toast from "react-hot-toast";
 import TableInput from "../Components/TableInput";
 
 const TableView = () => {
-  const { fields, setActiveTab,setRow,row } = useFormContext();
-  
-
+  const { fields, setActiveTab, setRow, row } = useFormContext();
   const [format, setFormat] = useState([]);
   useEffect(() => {
     const rowData = fields.map((field) => {
@@ -46,9 +44,22 @@ const TableView = () => {
       });
       return newState;
     });
+    setRow((prev)=>{
+      const state = [...prev];
+      while(state.length<5){
+        state.push(format);
+      } 
+      return state;
+    })
   }, [format, fields]);
 
-  
+  const deleteRow = (rowIndex) => {
+    setRow((prev) => {
+      const state = [...prev];
+      return state.filter((_, i) => i !== rowIndex);
+    });
+    toast.success("Row deleted successfully");
+  };
   return (
     <div className='overflow-x-auto mx-4'>
       <table className='table'>
@@ -74,11 +85,26 @@ const TableView = () => {
         <tbody>
           {row &&
             row.map((rowData, rowIndex) => (
-              <tr key={rowIndex}>
+              <tr
+                key={rowIndex}>
                 {fields &&
                   fields.map((_, fieldIndex) => (
-                    <TableInput key={fieldIndex} fieldIndex={fieldIndex} rowIndex={rowIndex} row = {row} setRow={setRow}/>
+                    <TableInput
+                      key={fieldIndex}
+                      fieldIndex={fieldIndex}
+                      rowIndex={rowIndex}
+                      row={row}
+                      setRow={setRow}
+                    />
                   ))}
+
+                <td>
+                  <Trash
+                    size={20}
+                    onClick={() => deleteRow(rowIndex)}
+                    className='mt-auto cursor-pointer text-red-500 hover:text-red-700'
+                  />
+                </td>
               </tr>
             ))}
         </tbody>

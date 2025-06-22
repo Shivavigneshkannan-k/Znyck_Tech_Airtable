@@ -40,7 +40,6 @@ const FieldTab = ({index}) => {
         </label>
         <br />
       </div>
-
       <Options index={index} type={field?.type} />
     </div>
   );
