@@ -5,6 +5,8 @@ const fieldSchema = new mongoose.Schema(
     name: { type: String, required: true },
     type: { type: String, required: true },
     choices: [String],
+    required:{type:Boolean,required:true},
+    unique:{type:Boolean,required:true},
     default: { type: mongoose.Schema.Types.Mixed }
   },
   { timestamps: true }
