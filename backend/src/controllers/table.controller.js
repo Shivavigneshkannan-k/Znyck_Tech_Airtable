@@ -83,23 +83,30 @@ const removeRow = async (req, res, next) => {
   res.status(200).json(response);
 };
 const updateRow = async (req, res, next) => {
-  const { tableId, rowId } = req.params;
-  const { values } = req.body;
-  console.log("values", values);
+  const { tableId } = req.params;
+  const { toUpdateRows } = req.body;
   const user = req.user;
+
+  // table Existence check
   if (!tableId) {
     throw new ApiError("tableId is required", null, 400);
   }
-  const table = await Table.findOne({ userId: user._id, _id: tableId });
+  let table = await Table.findOne({ userId: user._id, _id: tableId });
   if (!table) {
     throw new ApiError("Table not found", 404, null);
   }
-  const deletedRow = await Row.findOneAndUpdate(
-    { tableId, _id: rowId },
-    { $set: { values } },
-    { new: true }
+
+  
+  await Promise.all(
+    toUpdateRows.map((row) => {
+      return Row.updateOne(
+        { tableId, _id: row._id },
+        { $set: { values: row.values } }
+      );
+    })
   );
-  const response = new ApiResponse("Row updated successfully", deletedRow, 201);
+  table = await Row.find({tableId});
+  const response = new ApiResponse("Row updated successfully", table, 200);
   res.status(200).json(response);
 };
 // create,update,delete field
@@ -122,34 +129,34 @@ const createField = async (req, res, next) => {
   res.status(201).json(response);
 };
 const updateField = async (req, res, next) => {
-  const { fieldData } = req.body;
-  const { fieldId } = req.params;
-  const updatedTable = await Table.findOneAndUpdate(
-    { _id: req.tableId, "fields._id": fieldId },
-    {
-      $set: {
-        "fields.$.name": fieldData.name,
-        "fields.$.type": fieldData.type,
-        "fields.$.choices": fieldData.choices || [],
-        "fields.$.default": fieldData.default || null,
-        "fields.$.updatedAt": new Date(),
-        "fields.$.required": fieldData.required || false,
-        "fields.$.unique": fieldData.unique || false
-      }
-    },
-    {
-      new: true
-    }
+  const { toUpdateFields } = req.body;
+  const tableId = req.tableId;
+
+  await Promise.all(
+    toUpdateFields.map(async (fieldData) => {
+      return Table.updateOne(
+        { _id: tableId, "fields._id": fieldData._id },
+        {
+          $set: {
+            "fields.$.name": fieldData.name,
+            "fields.$.type": fieldData.type,
+            "fields.$.choices": fieldData.choices || [],
+            "fields.$.default": fieldData.default || null,
+            "fields.$.updatedAt": new Date(),
+            "fields.$.required": fieldData.required || false,
+            "fields.$.unique": fieldData.unique || false
+          }
+        }
+      );
+    })
   );
-  if (!updatedTable) {
-    return res.status(404).json({ success: false, message: "Field not found" });
-  }
+  const table = await Table.findById(tableId);
   const response = new ApiResponse(
     "table field is successfully updated",
-    updatedTable,
-    201
+    table,
+    200
   );
-  res.status(201).json(response);
+  res.status(200).json(response);
 };
 
 const deleteField = async (req, res, next) => {

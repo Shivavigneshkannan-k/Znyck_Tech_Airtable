@@ -35,7 +35,7 @@ router.post(
   asyncHandler(createField)
 );
 router.patch(
-  "/edit/field/:tableId/:fieldId",
+  "/edit/field/:tableId",
   asyncHandler(userAuth),
   asyncHandler(fieldMiddleware),
   asyncHandler(updateField)
@@ -56,7 +56,7 @@ router.delete(
 );
 
 router.patch(
-  "/edit/row/:tableId/:rowId",
+  "/edit/row/:tableId/",
   asyncHandler(userAuth),
   asyncHandler(updateRow)
 );

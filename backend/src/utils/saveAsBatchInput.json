@@ -1,0 +1,78 @@
+{
+  "toDeleteFields": ["fieldId_1", "fieldId_2"],
+  "toUpdatedFields": [
+    {
+      "_id": "fieldId",
+      "name": "username",
+      "type": "string",
+      "choices": [],
+      "default": null,
+      "required": false,
+      "unique": false
+    },
+    {
+      "_id": "fieldId",
+      "name": "username",
+      "type": "string",
+      "choices": [],
+      "default": null,
+      "required": false,
+      "unique": false
+    }
+  ],
+  "toAddFields": [
+    {
+      "name": "username",
+      "type": "string",
+      "choices": [],
+      "default": null,
+      "required": false,
+      "unique": false
+    },
+    {
+      "name": "username",
+      "type": "string",
+      "choices": [],
+      "default": null,
+      "required": false,
+      "unique": false
+    }
+  ],
+  "toDeleteRows": ["rowId_1", "rowId_2"],
+  "toUpdateRows": [
+    {
+      "_id": "rowId",
+      "tableId": "685835a06384a9e35aa922cc",
+      "values": {
+        "username": "john_doe",
+        "progress": "todo",
+        "email": ""
+      }
+    },
+    {
+      "_id": "rowId",
+      "tableId": "685835a06384a9e35aa922cc",
+      "values": {
+        "username": "john_doe",
+        "progress": "todo",
+        "email": ""
+      }
+    }
+  ],
+  "toAddRows": [
+    {
+      "values": {
+        "username": "john_doe",
+        "progress": "todo",
+        "email": ""
+      }
+    },
+    {
+      "values": {
+        "username": "john_doe",
+        "progress": "todo",
+        "email": ""
+      }
+    }
+  ]
+}
