@@ -4,15 +4,23 @@ import FieldTab from "../Components/FieldTab.jsx";
 import { FormContext } from "../context/form.context.js";
 import TableView from "./TableView.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { updateTable } from "../store/table.store.js";
+import { getTable, updateTable } from "../store/table.store.js";
 import toast from "react-hot-toast";
 import { nanoid } from "nanoid";
 import { useParams } from "react-router";
 
 const TablePage = () => {
-  const {tableIndex} = useParams();
+  const { tableIndex } = useParams();
   const tables = useSelector((store) => store.table.tables);
   const tableData = tableIndex >= 0 ? tables[tableIndex] : {};
+
+  useEffect(() => {
+    if (tableIndex=== -1) {
+      return;
+    }
+    dispatch(getTable({ tableId: tables[tableIndex]?._id }));
+  }, []);
+
   console.log("tables", tables[tableIndex]);
   const [tableMetaData, setTableMetaData] = useState(
     tableData?.tableMetaData || {
@@ -31,9 +39,16 @@ const TablePage = () => {
       });
     }
   }, []);
-  console.log(tableMetaData)
+  console.log(tableMetaData);
   const saveTable = () => {
-    dispatch(updateTable({ tableMetaData, fields, tableData: row,tableIndex:tableIndex }));
+    dispatch(
+      updateTable({
+        tableMetaData,
+        fields,
+        tableData: row,
+        tableIndex: tableIndex
+      })
+    );
     toast.success("Table saved successfully");
   };
   return (

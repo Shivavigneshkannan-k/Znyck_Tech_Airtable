@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import { getUser } from "./store/userThunks";
 import ViewTables from "./Pages/ViewTables";
 import TablePage from "./Pages/TablePage";
+import { getTables } from "./store/table.store";
 const App = () => {
   const user = useSelector(store => store.user.user);
   const dispatch = useDispatch();
@@ -20,7 +21,10 @@ const App = () => {
     if(!user){
       dispatch(getUser())
     }
-  },[])
+    if(user){
+      dispatch(getTables());
+    }
+  },[user])
   return (
     <>
       <div><Toaster/></div>
