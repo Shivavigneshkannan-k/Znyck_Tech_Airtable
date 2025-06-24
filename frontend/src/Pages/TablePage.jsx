@@ -12,7 +12,6 @@ const TablePage = () => {
   const { tableIndex } = useParams();
   const tables = useSelector((store) => store.table.tables);
   const activeTable = useSelector((store) => store.table.activeTable);
-  // const [tableData,setTableData] = useState({});
   const [activeTab, setActiveTab] = useState(null);
   const [row, setRow] = useState([]);
   const [fields, setFields] = useState([]);
@@ -22,6 +21,7 @@ const TablePage = () => {
   useEffect(() => {
     if(tableIndex!==undefined && tables[tableIndex]?._id){
       dispatch(getTable({tableId:tables[tableIndex]._id}));
+      console.log("from TablPage.jsx")
     }
   }, [dispatch,tableIndex,tables]);
 

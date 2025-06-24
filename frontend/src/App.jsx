@@ -24,6 +24,7 @@ const App = () => {
     if(user){
       dispatch(getTables());
     }
+    console.log("from app.jsx")
   },[user])
   return (
     <>

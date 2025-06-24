@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useFormContext } from "../context/form.context";
 import AddOptions, { AddOptionButton } from "./AddOptions";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteTableField, updateActiveTableField } from "../store/table.store";
+import { deleteTableField} from "../store/table.store";
 
 const Options = ({ type, index }) => {
   const { fields, setFields, setActiveTab, setRow } = useFormContext();
@@ -15,7 +15,6 @@ const Options = ({ type, index }) => {
     type.toLowerCase()
   );
 
-  console.log(fields);
   useEffect(() => {
     if (fields[index].choices) {
       setChoice(fields[index].choices);
@@ -39,22 +38,23 @@ const Options = ({ type, index }) => {
 
   const deleteField = () => {
     if(activeTable!==null){
-      console.log(activeTable)
       dispatch(
         deleteTableField({
           tableId: activeTable?._id,
           fieldId: fields[index]?._id
         })
       );
-      dispatch(updateActiveTableField({ fieldId: fields[index]._id }));
+      // dispatch(updateActiveTableField({ fieldId: fields[index]._id }));
     }
-    
+
+    // Correct default value assignment
     const val = {};
     fields.forEach((field) => {
       val[field.name] = val[field.default] ?? null;
     });
+
     setRow((prev) => {
-      const updatedRows = prev.map((r) => {
+      return prev.map((r) => {
         const updatedValues = {};
         Object.keys(val).forEach((fieldName) => {
           updatedValues[fieldName] = r.values[fieldName] || null;
@@ -64,9 +64,8 @@ const Options = ({ type, index }) => {
           values: updatedValues
         };
       });
-      return updatedRows;
     });
-    // setActiveTab(null);
+    setActiveTab(null);
   };
   // not in use now but used in onclick of save button
 

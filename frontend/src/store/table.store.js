@@ -115,7 +115,8 @@ const deleteTableField = createAsyncThunk(
       const response = await axiosInstance.patch(
         `/table/delete/field/${tableId}/${fieldId}`
       );
-      return response.data.data;
+      console.log("after deletion data ",response.data.data)
+      return {fieldId};
     } catch (err) {
       return rejectWithValue(
         err?.response?.data?.message || "deleting field failed"
@@ -149,21 +150,6 @@ const tableSlice = createSlice({
         return row._id != rowId;
       });
       state.activeTable.rows = rows;
-    },
-    updateActiveTableField: (state, action) => {
-      const { fieldId } = action.payload;
-      const tableId = state.activeTable.table._id;
-      const tableIndex = state.tables.findIndex(
-        (table) => table._id === tableId
-      );
-      if (tableIndex === -1) return;
-      const tableData = {
-        ...state.tables[tableIndex],
-        fields: state.tables[tableIndex].fields.filter((field) => {
-          return field._id !== fieldId;
-        })
-      };
-      state.tables[tableIndex] = tableData;
     }
   },
   extraReducers: (builder) => {
@@ -207,9 +193,19 @@ const tableSlice = createSlice({
       state.error = action.payload;
       toast.error(action.payload || "deleting row failed");
     });
-    builder.addCase(deleteTableField.fulfilled, (state) => {
-      toast.success("field is deleted successfully");
+    builder.addCase(deleteTableField.fulfilled, (state,action) => {
+      const { fieldId } = action.payload
+      const tableId = state.activeTable.table._id;
+      const tableIndex = state.tables.findIndex(
+        (table) => table._id === tableId
+      );
+      const updatedFields = state.tables[tableIndex].fields.filter((field) => {
+        return field._id !== fieldId;
+      });
+      state.activeTable.table.fields = updatedFields;
+      state.tables[tableIndex].fields = updatedFields;
       state.error = "";
+      toast.success("field is deleted successfully");
     });
     builder.addCase(deleteTableField.rejected, (state, action) => {
       state.error = action.payload;
@@ -217,7 +213,8 @@ const tableSlice = createSlice({
     });
   }
 });
-export const { updateTable, updateActiveTableRows, updateActiveTableField } =
+
+export const { updateTable, updateActiveTableRows } =
   tableSlice.actions;
 export default tableSlice.reducer;
 export {
