@@ -8,7 +8,8 @@ import {
   deleteTableRow,
   deleteTableField,
   addNewField,
-  saveAll
+  saveAll,
+  deleteTable
 } from "./tableThunk";
 
 const tableSlice = createSlice({
@@ -99,7 +100,7 @@ const tableSlice = createSlice({
     });
     builder.addCase(deleteTableRow.rejected, (state, action) => {
       state.error = action.payload;
-      toast.error(action.payload || "deleting row failed");
+      toast.error(action.payload || "error in deleting row");
     });
     builder.addCase(deleteTableField.fulfilled, (state, action) => {
       const { fieldId } = action.payload;
@@ -117,7 +118,7 @@ const tableSlice = createSlice({
     });
     builder.addCase(deleteTableField.rejected, (state, action) => {
       state.error = action.payload;
-      toast.error(action.payload || "deleting field failed");
+      toast.error(action.payload || "error in deleting field");
     });
     builder.addCase(saveAll.fulfilled, (state, action) => {
       const table = action.payload;
@@ -129,7 +130,17 @@ const tableSlice = createSlice({
     });
     builder.addCase(saveAll.rejected, (state, action) => {
       state.error = action.payload;
-      toast.error(action.payload || "failed in saving table");
+      toast.error(action.payload || "error in saving table");
+    });
+    builder.addCase(deleteTable.fulfilled, (state, action) => {
+      const {tableId} = action.payload;
+      const tableIndex = state.tables.findIndex(t=> t._id == tableId);
+      state.tables = state.tables.filter((_,index)=> index!=tableIndex)
+      state.error = "";
+    });
+    builder.addCase(deleteTable.rejected, (state, action) => {
+      state.error = action.payload;
+      toast.error(action.payload || "error in table deletion");
     });
   }
 });

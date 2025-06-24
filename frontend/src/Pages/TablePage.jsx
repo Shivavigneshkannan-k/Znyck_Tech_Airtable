@@ -47,7 +47,7 @@ const TablePage = () => {
           <input
             className='fieldset-legend outline-0 text-2xl text-center'
             placeholder='Table Name'
-            value={tableName.toUpperCase()}
+            value={tableName}
             onChange={(e) => setTableName(e.target.value)}
           />
           <button

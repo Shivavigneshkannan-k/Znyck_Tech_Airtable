@@ -12,7 +12,8 @@ import {
   createField,
   updateField,
   deleteField,
-  changeTableName
+  changeTableName,
+  deleteTable
 } from "../controllers/table.controller.js";
 import {
   addRowMiddleware,
@@ -46,6 +47,11 @@ router.patch(
   asyncHandler(userAuth),
   asyncHandler(fieldMiddleware),
   asyncHandler(deleteField)
+);
+router.delete(
+  "/delete/:tableId",
+  asyncHandler(userAuth),
+  asyncHandler(deleteTable)
 );
 
 router.get("/get/:tableId", asyncHandler(userAuth), asyncHandler(getTable));

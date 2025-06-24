@@ -146,6 +146,21 @@ const deleteTableField = createAsyncThunk(
     }
   }
 );
+const deleteTable = createAsyncThunk(
+  "table/deleteTable",
+  async ({ tableId,}, { rejectWithValue }) => {
+    try {
+      await axiosInstance.delete(
+        `/table/delete/${tableId}`
+      );
+      return {tableId}
+    } catch (err) {
+      return rejectWithValue(
+        err?.response?.data?.message || "deleting table failed"
+      );
+    }
+  }
+);
 const saveAll = createAsyncThunk("table/saveAll",
   async({tableId,fields,rows,tableName},{rejectWithValue})=>{
     try{
@@ -182,5 +197,6 @@ export {
   deleteTableRow,
   addNewField,
   deleteTableField,
+  deleteTable,
   saveAll
 };
