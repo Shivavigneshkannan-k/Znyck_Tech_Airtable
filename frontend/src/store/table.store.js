@@ -7,14 +7,17 @@ import {
   addNewRow,
   deleteTableRow,
   deleteTableField,
-  addNewField
+  addNewField,
+  saveAll
 } from "./tableThunk";
 
 const tableSlice = createSlice({
   name: "table",
   initialState: {
     tables: [],
-    activeTable: null
+    activeTable: null,
+    toUpdateFields: {},
+    toUpdateRows: {}
   },
   reducers: {
     updateTable: (state, action) => {
@@ -28,13 +31,19 @@ const tableSlice = createSlice({
     },
     updateActiveTableRows: (state, action) => {
       const { rowId } = action.payload;
-      console.log("rowId", rowId);
-      console.log(state.activeTable.rows);
       let rows = [...state.activeTable.rows];
       rows = rows.filter((row) => {
         return row._id != rowId;
       });
       state.activeTable.rows = rows;
+    },
+    addToUpdateFields:(state,action)=>{
+      const {fieldId,fieldData} = action.payload;
+      state.toUpdateFields[fieldId] = fieldData;
+    },
+    addToUpdateRows:(state,action)=>{
+      const {rowId,rowData} = action.payload;
+      state.toUpdateRows[rowId] = rowData
     }
   },
   extraReducers: (builder) => {
@@ -110,8 +119,20 @@ const tableSlice = createSlice({
       state.error = action.payload;
       toast.error(action.payload || "deleting field failed");
     });
+    builder.addCase(saveAll.fulfilled, (state, action) => {
+      const table = action.payload;
+      const tableIndex = state.tables.findIndex(t=> t._id == table.table._id);
+      state.tables[tableIndex] = table.table;
+      state.activeTable = table
+      state.error = "";
+      toast.success("saved successfully ");
+    });
+    builder.addCase(saveAll.rejected, (state, action) => {
+      state.error = action.payload;
+      toast.error(action.payload || "failed in saving table");
+    });
   }
 });
 
-export const { updateTable, updateActiveTableRows } = tableSlice.actions;
+export const { updateTable, updateActiveTableRows,addToUpdateFields,addToUpdateRows } = tableSlice.actions;
 export default tableSlice.reducer;

@@ -33,12 +33,14 @@ const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
   const choices = fields[fieldIndex]?.choices;
   const [multiChoice, setMultiChoice] = useState([]);
   useEffect(() => {
+    console.log("multiple select");
+    
     const fieldName = fields[fieldIndex].name;
     setRow((prev) => {
       const state = [...prev];
       const row = { ...state[rowIndex] };
       row.values = { ...row.values, [fieldName]: multiChoice };
-      state[rowIndex]= row;
+      state[rowIndex] = row;
       return state;
     });
   }, [multiChoice]);
@@ -57,12 +59,12 @@ const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
           tabIndex={0}
           role='button'
           className='btn m-1 border-2 border-white relative'>
-          Multi Select 
+          Multi Select
         </div>
         <ul
           tabIndex={0}
           className='dropdown-content menu rounded-box z-1 bg-base-200 w-full shadow-sm absolute '>
-          {choices && choices.length>0?
+          {choices && choices.length > 0 ? (
             choices.map((choice, idx) => {
               return (
                 <p
@@ -79,7 +81,10 @@ const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
                   {choice}
                 </p>
               );
-            }):<p>add options</p>}
+            })
+          ) : (
+            <p>add options</p>
+          )}
         </ul>
       </div>
     </div>
@@ -92,6 +97,7 @@ const TableInput = ({ rowIndex, fieldIndex, row, setRow, field }) => {
     console.log("name", e.target.name);
     console.log("value", e.target.value);
     console.log("current row", row[rowIndex]);
+
     setRow((prev) => {
       const state = [...prev];
 
@@ -102,6 +108,7 @@ const TableInput = ({ rowIndex, fieldIndex, row, setRow, field }) => {
       return state;
     });
   };
+
   return fields &&
     ["single select", "multiple select"].includes(
       fields[fieldIndex]?.dropDown

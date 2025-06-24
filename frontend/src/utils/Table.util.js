@@ -1,12 +1,27 @@
 import { nanoid } from "nanoid";
-export const handleFieldChange = (e, index, setFields) => {
+import { addToUpdateFields } from "../store/table.store";
+export const handleFieldChange = (e, index, setFields, dispatch, fieldId) => {
   const { name, type, value, checked } = e.target;
   setFields((prev) => {
     const state = [...prev];
-    state[index] = {
-      ...state[index],
-      [name]: type === "checkbox" ? checked : value
-    };
+    if (
+      name === "type" &&
+      ["multiple select", "single select"].includes(value)
+    ) {
+      state[index] = state[index] = {
+        ...state[index],
+        [name]: "string",
+        dropDown: value
+      };
+    } else {
+      state[index] = {
+        ...state[index],
+        [name]: type === "checkbox" ? checked : value,
+        dropDown: null
+      };
+    }
+    console.log(state);
+    dispatch(addToUpdateFields({ fieldId, fieldData: state[index] }));
     return state;
   });
 };
@@ -94,8 +109,8 @@ export const tableTemplate = [
     required: false,
     unique: false,
     options: {
-      choices:["pending","done","in-progress"],
+      choices: ["pending", "done", "in-progress"],
       default: "pending"
     }
-  },
+  }
 ];

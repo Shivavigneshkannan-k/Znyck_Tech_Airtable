@@ -196,6 +196,24 @@ const deleteField = async (req, res, next) => {
   );
   res.status(200).json(response);
 };
+const changeTableName = async(req,res,next)=>{
+  const user = req.user;
+  const {tableName} = req.body;
+  const {tableId} = req.params;
+  if (!tableId) {
+    throw new ApiError("tableId is required", null, 400);
+  }
+  const table = await Table.findOneAndUpdate({ userId: user._id, _id: tableId },{
+    $set:{name:tableName}
+  });
+  const response = new ApiResponse(
+    "table name change successfully "+tableName,
+    table,
+    200
+  );
+  res.status(200).json(response);
+
+} 
 
 // Exporting the functions to be used in routes
 export {
@@ -207,5 +225,6 @@ export {
   addRows,
   createField,
   deleteField,
-  updateField
+  updateField,
+  changeTableName
 };

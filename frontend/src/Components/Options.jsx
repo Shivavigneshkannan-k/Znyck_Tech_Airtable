@@ -3,6 +3,7 @@ import { useFormContext } from "../context/form.context";
 import AddOptions, { AddOptionButton } from "./AddOptions";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteTableField } from "../store/tableThunk";
+import { handleFieldChange } from "../utils/Table.util";
 
 const Options = ({ type, index }) => {
   const { fields, setFields, setActiveTab, setRow } = useFormContext();
@@ -11,9 +12,7 @@ const Options = ({ type, index }) => {
   const [choice, setChoice] = useState([]);
   const dispatch = useDispatch();
   //filtering attributes for different type of fields
-  const isDropdown = ["multiple select", "single select"].includes(
-    type.toLowerCase()
-  );
+  
 
   useEffect(() => {
     if (fields[index].choices) {
@@ -21,23 +20,8 @@ const Options = ({ type, index }) => {
     }
   }, []);
 
-  const handleChange = (e) => {
-    let { name, value } = e.target;
-    setFields((prev) => {
-      const state = [...prev];
-      state[index] = {
-        ...state[index],
-        options: {
-          ...state[index].options,
-          [name]: value
-        }
-      };
-      return state;
-    });
-  };
-
   const deleteField = () => {
-    if(activeTable!==null){
+    if (activeTable !== null) {
       dispatch(
         deleteTableField({
           tableId: activeTable?._id,
@@ -78,7 +62,6 @@ const Options = ({ type, index }) => {
       };
       return state;
     });
-    console.log(fields);
     setActiveTab(null);
   };
   return (
@@ -89,23 +72,31 @@ const Options = ({ type, index }) => {
           setHide((prev) => !prev);
         }}>
         {" "}
-        {hide ? "show " : "hide"}{" "}
+        {hide ? "show options" : "hide options"}{" "}
       </button>
 
       <div className={`${hide ? "hidden" : ""}`}>
         {/* default value input field */}
         <div className='flex justify-between w-full items-center p-2'>
-          <p>default</p>
+          <p>Default</p>
           <input
             type={type}
-            placeholder={`default ${isDropdown ? "text" : type} value`}
-            name='default'
-            onChange={(e) => handleChange(e)}
+            placeholder={`default ${fields[index].dropDown ? "text" : type} value`}
+            name="default"
+            onChange={(e) => {
+              handleFieldChange(
+                e,
+                index,
+                setFields,
+                dispatch,
+                fields[index]._id,
+              );
+            }}
             className='input-field'
           />
         </div>
 
-        {isDropdown && (
+        {fields[index].dropDown && (
           <div>
             <AddOptionButton setChoice={setChoice} />
             {choice &&
@@ -131,7 +122,9 @@ const Options = ({ type, index }) => {
       </button>
       <button
         className='btn mx-2'
-        onClick={()=>{deleteField()}}>
+        onClick={() => {
+          deleteField();
+        }}>
         delete
       </button>
     </div>

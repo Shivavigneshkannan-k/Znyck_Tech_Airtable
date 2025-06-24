@@ -146,6 +146,33 @@ const deleteTableField = createAsyncThunk(
     }
   }
 );
+const saveAll = createAsyncThunk("table/saveAll",
+  async({tableId,fields,rows,tableName},{rejectWithValue})=>{
+    try{
+       await axiosInstance.patch(
+        `/table/edit/tableName/${tableId}`,{
+          tableName:tableName
+        }
+      );
+       await axiosInstance.patch(
+        `/table/edit/field/${tableId}`,{
+          toUpdateFields:fields
+        }
+      );
+       await axiosInstance.patch(
+        `/table/edit/row/${tableId}`,{
+          toUpdateRows:rows
+        }
+      );
+      const response = await axiosInstance.get(`/table/get/${tableId}`);
+      return response.data.data;
+    }catch (err) {
+      return rejectWithValue(
+        err?.response?.data?.message || "deleting field failed"
+      );
+    }
+  }
+)
 
 export {
   createNewTable,
@@ -154,5 +181,6 @@ export {
   addNewRow,
   deleteTableRow,
   addNewField,
-  deleteTableField
+  deleteTableField,
+  saveAll
 };

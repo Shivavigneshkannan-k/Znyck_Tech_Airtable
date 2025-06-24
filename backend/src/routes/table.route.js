@@ -11,7 +11,8 @@ import {
   addRows,
   createField,
   updateField,
-  deleteField
+  deleteField,
+  changeTableName
 } from "../controllers/table.controller.js";
 import {
   addRowMiddleware,
@@ -59,6 +60,11 @@ router.patch(
   "/edit/row/:tableId/",
   asyncHandler(userAuth),
   asyncHandler(updateRow)
+);
+router.patch(
+  "/edit/tableName/:tableId/",
+  asyncHandler(userAuth),
+  asyncHandler(changeTableName)
 );
 
 export default router;

@@ -5,8 +5,7 @@ import TableView from "./TableView.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { useParams } from "react-router";
-import { getTable,addNewField } from "../store/tableThunk.js";
-import { updateTable } from "../store/table.store.js";
+import { getTable, addNewField, saveAll } from "../store/tableThunk.js";
 
 const TablePage = () => {
   const { tableIndex } = useParams();
@@ -15,31 +14,27 @@ const TablePage = () => {
   const [activeTab, setActiveTab] = useState(null);
   const [row, setRow] = useState([]);
   const [fields, setFields] = useState([]);
-  const [tableName,setTableName] = useState("");
+  const [tableName, setTableName] = useState("");
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if(tableIndex!==undefined && tables[tableIndex]?._id){
-      dispatch(getTable({tableId:tables[tableIndex]._id}));
-      console.log("from TablPage.jsx")
+    if (tableIndex !== undefined && tables[tableIndex]?._id) {
+      dispatch(getTable({ tableId: tables[tableIndex]._id }));
     }
-  }, [dispatch,tableIndex,tables]);
+  }, [dispatch, tableIndex, tables]);
 
-  useEffect(()=>{
-    if(activeTable){
-      setRow(activeTable?.rows || [])
-      setFields(activeTable?.table?.fields || [])
-      setTableName(activeTable?.table.name || "")
+  useEffect(() => {
+    if (activeTable) {
+      setRow(activeTable?.rows || []);
+      setFields(activeTable?.table?.fields || []);
+      setTableName(activeTable?.table.name || "");
     }
-  },[activeTable,activeTab?.table?.fields]);
+    
+  }, [activeTable, activeTab?.table?.fields]);
 
   const saveTable = () => {
     dispatch(
-      updateTable({
-        fields,
-        rows:row,
-        tableIndex: tableIndex
-      })
+      saveAll({ tableId: activeTable.table._id, fields, rows: row, tableName })
     );
     toast.success("Table saved successfully");
   };
@@ -53,13 +48,13 @@ const TablePage = () => {
             className='fieldset-legend outline-0 text-2xl text-center'
             placeholder='Table Name'
             value={tableName.toUpperCase()}
-            onChange={(e) =>
-              setTableName(e.target.value)
-            }
+            onChange={(e) => setTableName(e.target.value)}
           />
           <button
             className='btn btn-active absolute right-2'
-            onClick={()=>{saveTable()}}>
+            onClick={() => {
+              saveTable();
+            }}>
             Save
           </button>
         </div>
@@ -73,14 +68,21 @@ const TablePage = () => {
 
         <div className='flex'>
           <FormContext.Provider
-            value={{ setActiveTab, fields, setFields, row, setRow,activeTable }}>
+            value={{
+              setActiveTab,
+              fields,
+              setFields,
+              row,
+              setRow,
+              activeTable
+            }}>
             <TableView />
           </FormContext.Provider>
 
           <button
             className='btn my-2'
             onClick={() => {
-                dispatch(addNewField({tableId:activeTable?.table?._id}))
+              dispatch(addNewField({ tableId: activeTable?.table?._id }));
             }}>
             Add Field
           </button>

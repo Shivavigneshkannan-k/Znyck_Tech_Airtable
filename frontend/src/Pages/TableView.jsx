@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "../context/form.context";
-import { CirclePlus, Pencil, Trash } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 import toast from "react-hot-toast";
 import TableInput from "../Components/TableInput";
 import { useDispatch } from "react-redux";
@@ -14,38 +14,32 @@ const TableView = () => {
   useEffect(() => {
     const val = {};
     fields.forEach((field) => {
-      val[field.name] = val[field.default] ?? null;
+      val[field.name] = field.default ?? null;
     });
-
     if (activeTable) {
       setFormat({ tableId: activeTable?.table?._id, values: val });
     }
   }, [fields, activeTable]);
 
-  useEffect(() => {
-    if (!row) return;
-    setRow((prev) => {
-      const updatedRows = prev.map((r) => {
-        const updatedValues = {};
-        Object.keys(format.values).forEach((fieldName) => {
-          updatedValues[fieldName] = r.values[fieldName] || null;
-        });
-        console.log("updated", updatedValues);
-        return {
-          ...r,
-          values: updatedValues
-        };
+ useEffect(() => {
+  if (!format?.values || !Array.isArray(row)) return;
+
+  setRow((prev) => {
+    return prev.map((r) => {
+      const updatedValues = { ...r.values }; // don't discard existing values
+      Object.keys(format.values).forEach((fieldName) => {
+        if (!(fieldName in updatedValues)) {
+          updatedValues[fieldName] = null; // add only missing fields
+        }
       });
-      return updatedRows;
+      return {
+        ...r,
+        values: updatedValues,
+      };
     });
-    // setRow((prev) => {
-    //   const state = [...prev];
-    //   while (state.length < 5) {
-    //     state.push({ ...format, values: { ...format.values } });
-    //   }
-    //   return state;
-    // });
-  }, [format, fields]);
+  });
+}, [format]);
+
 
   return (
     <div className='overflow-x-auto mx-4'>
@@ -119,10 +113,8 @@ const TableView = () => {
             throw new Error(_message);
           }
           if (activeTable) {
-            console.log(format.values);
             dispatch(addNewRow({ tableId: activeTable?.table?._id, format }));
           }
-          // setRow((prev) => [...prev, {...format,values:{...format.values}}]); //deep clone for reusing format
         }}>
         New Row
       </button>
