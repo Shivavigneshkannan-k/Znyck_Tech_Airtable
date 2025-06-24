@@ -1,129 +1,14 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axiosInstance from "../utils/axiosInstance";
+import { createSlice } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
-const tableTemp = {
-  name: "untitled",
-  fields: [
-    {
-      name: "Name",
-      type: "text",
-      required: false,
-      unique: false,
-      choices: [],
-      default: null
-    },
-    {
-      name: "Note",
-      type: "text",
-      required: false,
-      unique: false,
-      choices: [],
-      default: null
-    },
-    {
-      name: "Email",
-      type: "email",
-      required: false,
-      unique: false,
-      choices: [],
-      default: null
-    },
-    {
-      name: "Status",
-      type: "single select",
-      required: false,
-      unique: false,
-      choices: ["pending", "done", "in-progress"],
-      default: "pending"
-    }
-  ]
-};
-const createNewTable = createAsyncThunk(
-  "table/newTable",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.post("/table/create", tableTemp);
-      return response.data.data;
-    } catch (err) {
-      return rejectWithValue(
-        err.response.data.message || "failed in table creation"
-      );
-    }
-  }
-);
-const getTables = createAsyncThunk(
-  "table/getAllTables",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.get("/table/get");
-      return response.data.data;
-    } catch (err) {
-      return rejectWithValue(
-        err.response.data.message || "fetching all tables failed"
-      );
-    }
-  }
-);
-const getTable = createAsyncThunk(
-  "table/getTable",
-  async ({ tableId }, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.get(`/table/get/${tableId}`);
-      return response.data.data;
-    } catch (err) {
-      return rejectWithValue(
-        err.response.data.message || "fetching all tables failed"
-      );
-    }
-  }
-);
-const addNewRow = createAsyncThunk(
-  "table/addNewRow",
-  async ({ tableId, format }, { rejectWithValue }) => {
-    console.log(format);
-    try {
-      const response = await axiosInstance.post(`/table/add/rows/${tableId}`, {
-        tableData: [{ ...format.values }]
-      });
-      return response.data.data;
-    } catch (err) {
-      return rejectWithValue(
-        err?.response?.data?.message || "add new row failed"
-      );
-    }
-  }
-);
-const deleteTableRow = createAsyncThunk(
-  "table/deleteTableRow",
-  async ({ tableId, rowId }, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.delete(
-        `/table/delete/row/${tableId}/${rowId}`
-      );
-      return response.data.data;
-    } catch (err) {
-      return rejectWithValue(
-        err?.response?.data?.message || "deleting row failed"
-      );
-    }
-  }
-);
-const deleteTableField = createAsyncThunk(
-  "table/deleteTableField",
-  async ({ tableId, fieldId }, { rejectWithValue }) => {
-    try {
-      const response = await axiosInstance.patch(
-        `/table/delete/field/${tableId}/${fieldId}`
-      );
-      console.log("after deletion data ",response.data.data)
-      return {fieldId};
-    } catch (err) {
-      return rejectWithValue(
-        err?.response?.data?.message || "deleting field failed"
-      );
-    }
-  }
-);
+import {
+  createNewTable,
+  getTables,
+  getTable,
+  addNewRow,
+  deleteTableRow,
+  deleteTableField,
+  addNewField
+} from "./tableThunk";
 
 const tableSlice = createSlice({
   name: "table",
@@ -185,6 +70,20 @@ const tableSlice = createSlice({
       state.error = action.payload;
       toast.error(action.payload || "error in adding new row");
     });
+    builder.addCase(addNewField.fulfilled, (state, action) => {
+      const table = action.payload
+      console.log("updated table",table);
+      const tableIndex = state.tables.findIndex(t => t._id === table._id);
+      console.log("table Index",tableIndex);
+      state.activeTable.table.fields = table.fields;
+      state.tables[tableIndex].fields = table.fields;
+      toast.success("new field is added successfully");
+      state.error = "";
+    });
+    builder.addCase(addNewField.rejected, (state, action) => {
+      state.error = action.payload;
+      toast.error(action.payload || "error in adding new field");
+    });
     builder.addCase(deleteTableRow.fulfilled, (state) => {
       toast.success("row is deleted successfully");
       state.error = "";
@@ -193,8 +92,8 @@ const tableSlice = createSlice({
       state.error = action.payload;
       toast.error(action.payload || "deleting row failed");
     });
-    builder.addCase(deleteTableField.fulfilled, (state,action) => {
-      const { fieldId } = action.payload
+    builder.addCase(deleteTableField.fulfilled, (state, action) => {
+      const { fieldId } = action.payload;
       const tableId = state.activeTable.table._id;
       const tableIndex = state.tables.findIndex(
         (table) => table._id === tableId
@@ -214,14 +113,5 @@ const tableSlice = createSlice({
   }
 });
 
-export const { updateTable, updateActiveTableRows } =
-  tableSlice.actions;
+export const { updateTable, updateActiveTableRows } = tableSlice.actions;
 export default tableSlice.reducer;
-export {
-  createNewTable,
-  getTables,
-  getTable,
-  addNewRow,
-  deleteTableRow,
-  deleteTableField
-};

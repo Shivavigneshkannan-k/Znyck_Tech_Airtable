@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { createNewTable } from "../store/table.store";
+import { createNewTable } from "../store/tableThunk";
 
 const ViewTables = () => {
   const tables = useSelector((store) => store.table.tables);

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useFormContext } from "../context/form.context";
 import AddOptions, { AddOptionButton } from "./AddOptions";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteTableField} from "../store/table.store";
+import { deleteTableField } from "../store/tableThunk";
 
 const Options = ({ type, index }) => {
   const { fields, setFields, setActiveTab, setRow } = useFormContext();

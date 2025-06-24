@@ -4,7 +4,8 @@ import { CirclePlus, Pencil, Trash } from "lucide-react";
 import toast from "react-hot-toast";
 import TableInput from "../Components/TableInput";
 import { useDispatch } from "react-redux";
-import { addNewRow, deleteTableRow, updateActiveTableRows } from "../store/table.store";
+import { addNewRow, deleteTableRow } from "../store/tableThunk";
+import { updateActiveTableRows } from "../store/table.store";
 
 const TableView = () => {
   const { fields, setActiveTab, setRow, row, activeTable } = useFormContext();

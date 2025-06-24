@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { addNewField } from "../utils/Table.util.js";
 import FieldTab from "../Components/FieldTab.jsx";
 import { FormContext } from "../context/form.context.js";
 import TableView from "./TableView.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import { getTable, updateTable } from "../store/table.store.js";
 import toast from "react-hot-toast";
 import { useParams } from "react-router";
+import { getTable,addNewField } from "../store/tableThunk.js";
+import { updateTable } from "../store/table.store.js";
 
 const TablePage = () => {
   const { tableIndex } = useParams();
@@ -79,7 +79,9 @@ const TablePage = () => {
 
           <button
             className='btn my-2'
-            onClick={() => addNewField(fields, setFields)}>
+            onClick={() => {
+                dispatch(addNewField({tableId:activeTable?.table?._id}))
+            }}>
             Add Field
           </button>
         </div>

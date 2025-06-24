@@ -13,7 +13,7 @@ import { useEffect } from "react";
 import { getUser } from "./store/userThunks";
 import ViewTables from "./Pages/ViewTables";
 import TablePage from "./Pages/TablePage";
-import { getTables } from "./store/table.store";
+import { getTables } from "./store/tableThunk";
 const App = () => {
   const user = useSelector(store => store.user.user);
   const dispatch = useDispatch();
