@@ -1,51 +1,43 @@
 import { useEffect, useState } from "react";
-import { addNewField, tableTemplate } from "../utils/Table.util.js";
+import { addNewField } from "../utils/Table.util.js";
 import FieldTab from "../Components/FieldTab.jsx";
 import { FormContext } from "../context/form.context.js";
 import TableView from "./TableView.jsx";
 import { useDispatch, useSelector } from "react-redux";
 import { getTable, updateTable } from "../store/table.store.js";
 import toast from "react-hot-toast";
-import { nanoid } from "nanoid";
 import { useParams } from "react-router";
 
 const TablePage = () => {
   const { tableIndex } = useParams();
   const tables = useSelector((store) => store.table.tables);
-  const tableData = tableIndex >= 0 ? tables[tableIndex] : {};
-
-  useEffect(() => {
-    if (tableIndex=== -1) {
-      return;
-    }
-    dispatch(getTable({ tableId: tables[tableIndex]?._id }));
-  }, []);
-
-  console.log("tables", tables[tableIndex]);
-  const [tableMetaData, setTableMetaData] = useState(
-    tableData?.tableMetaData || {
-      name: "New Table",
-      id: nanoid()
-    }
-  );
+  const activeTable = useSelector((store) => store.table.activeTable);
+  // const [tableData,setTableData] = useState({});
   const [activeTab, setActiveTab] = useState(null);
+  const [row, setRow] = useState([]);
+  const [fields, setFields] = useState([]);
+  const [tableName,setTableName] = useState("");
   const dispatch = useDispatch();
-  const [row, setRow] = useState(tableData?.tableData || []);
-  const [fields, setFields] = useState(tableData?.fields || []);
+
   useEffect(() => {
-    if (fields.length == 0) {
-      setFields(() => {
-        return tableTemplate.map((field) => ({ ...field, fieldId: nanoid() }));
-      });
+    if(tableIndex!==undefined && tables[tableIndex]?._id){
+      dispatch(getTable({tableId:tables[tableIndex]._id}));
     }
-  }, []);
-  console.log(tableMetaData);
+  }, [dispatch,tableIndex,tables]);
+
+  useEffect(()=>{
+    if(activeTable){
+      setRow(activeTable?.rows || [])
+      setFields(activeTable?.table?.fields || [])
+      setTableName(activeTable?.table.name || "")
+    }
+  },[activeTable,activeTab?.table?.fields]);
+
   const saveTable = () => {
     dispatch(
       updateTable({
-        tableMetaData,
         fields,
-        tableData: row,
+        rows:row,
         tableIndex: tableIndex
       })
     );
@@ -59,15 +51,15 @@ const TablePage = () => {
         <div className=' flex justify-center items-center '>
           <input
             className='fieldset-legend outline-0 text-2xl text-center'
-            placeholder='New Table'
-            value={tableMetaData.name.toUpperCase()}
+            placeholder='Table Name'
+            value={tableName.toUpperCase()}
             onChange={(e) =>
-              setTableMetaData((prev) => ({ ...prev, name: e.target.value }))
+              setTableName(e.target.value)
             }
           />
           <button
             className='btn btn-active absolute right-2'
-            onClick={saveTable}>
+            onClick={()=>{saveTable()}}>
             Save
           </button>
         </div>
@@ -81,7 +73,7 @@ const TablePage = () => {
 
         <div className='flex'>
           <FormContext.Provider
-            value={{ setActiveTab, fields, setFields, row, setRow }}>
+            value={{ setActiveTab, fields, setFields, row, setRow,activeTable }}>
             <TableView />
           </FormContext.Provider>
 

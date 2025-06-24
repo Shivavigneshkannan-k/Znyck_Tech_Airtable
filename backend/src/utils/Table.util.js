@@ -5,16 +5,18 @@ export const validateFields = (fields, allowedFields, values) => {
     }
     const expectedType = fields[key];
     const actualValue = values[key];
-      if(["string","email","single select","multiple select"].includes(expectedType)){
-
-        if (typeof actualValue !== "string") {
-          throw new Error(`Field ${key} should be a string`);
-        }
+    if (
+      ["string", "email", "single select", "multiple select"].includes(
+        expectedType
+      )
+    ) {
+      if (actualValue !== null && typeof actualValue !== "string") {
+        throw new Error(`Field ${key} should be a string`);
       }
-      else{
-        if (typeof actualValue !== expectedType) {
-          throw new Error(`Field ${key} should be a ${expectedType}`);
-        }
+    } else {
+      if (actualValue !== null && typeof actualValue !== expectedType) {
+        throw new Error(`Field ${key} should be a ${expectedType}`);
       }
+    }
   });
 };

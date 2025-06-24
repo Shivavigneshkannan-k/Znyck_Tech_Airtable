@@ -144,7 +144,8 @@ const updateField = async (req, res, next) => {
             "fields.$.default": fieldData.default || null,
             "fields.$.updatedAt": new Date(),
             "fields.$.required": fieldData.required || false,
-            "fields.$.unique": fieldData.unique || false
+            "fields.$.unique": fieldData.unique || false,
+            "fields.$.dropDown": fieldData.dropDown || null
           }
         }
       );

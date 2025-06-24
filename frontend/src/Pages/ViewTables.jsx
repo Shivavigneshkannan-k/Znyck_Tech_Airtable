@@ -9,7 +9,7 @@ const ViewTables = () => {
   const dispatch = useDispatch();
   const handleCreateTable = () => {
     dispatch(createNewTable());
-    navigate(`/table/${-1}`);
+    navigate(`/table/${tables.length-1}`);
   };
   return (
     <div className='p-5 flex flex-wrap gap-4'>

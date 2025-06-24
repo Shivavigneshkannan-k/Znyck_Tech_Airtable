@@ -50,7 +50,7 @@ router.patch(
 router.get("/get/:tableId", asyncHandler(userAuth), asyncHandler(getTable));
 
 router.delete(
-  "/edit/row/:tableId/:rowId",
+  "/delete/row/:tableId/:rowId",
   asyncHandler(userAuth),
   asyncHandler(removeRow)
 );

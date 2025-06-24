@@ -3,63 +3,49 @@ import { useFormContext } from "../context/form.context";
 import { CirclePlus, Pencil, Trash } from "lucide-react";
 import toast from "react-hot-toast";
 import TableInput from "../Components/TableInput";
+import { useDispatch } from "react-redux";
+import { addNewRow, deleteTableRow, updateActiveTableRows } from "../store/table.store";
 
 const TableView = () => {
-  const { fields, setActiveTab, setRow, row } = useFormContext();
-  const [format, setFormat] = useState([]);
+  const { fields, setActiveTab, setRow, row, activeTable } = useFormContext();
+  const [format, setFormat] = useState({});
+  const dispatch = useDispatch();
   useEffect(() => {
-    const rowData = fields.map((field) => {
-      return {
-        fieldName: field?.name,
-        value: "",
-        type: field.type,
-        fieldId: field?.fieldId
-      };
+    const val = {};
+    fields.forEach((field) => {
+      val[field.name] = val[field.default] ?? null;
     });
-    setFormat([...rowData]);
-    console.log("render");
-  }, [fields]);
+
+    if (activeTable) {
+      setFormat({ tableId: activeTable?.table?._id, values: val });
+    }
+  }, [fields, activeTable]);
 
   useEffect(() => {
+    if (!row) return;
     setRow((prev) => {
-      const state = [...prev];
-      const newState = state.map((rows) => {
-        const rowMap = new Map();
-        rows.forEach((item) => {
-          rowMap.set(item.fieldId, item);
+      const updatedRows = prev.map((r) => {
+        const updatedValues = {};
+        Object.keys(format.values).forEach((fieldName) => {
+          updatedValues[fieldName] = r.values[fieldName] || null;
         });
-        format.forEach((item) => {
-          if (!rowMap.has(item.fieldId)) {
-            rowMap.set(item.fieldId, item);
-          } else {
-            const existing = rowMap.get(item.fieldId);
-            rowMap.set(item.fieldId, {
-              ...existing,
-              ...item,
-              value: item.value ? item.value : existing.value
-            });
-          }
-        });
-        return Array.from(rowMap.values());
+        console.log("updated", updatedValues);
+        return {
+          ...r,
+          values: updatedValues
+        };
       });
-      return newState;
+      return updatedRows;
     });
-    setRow((prev)=>{
-      const state = [...prev];
-      while(state.length<5){
-        state.push(format);
-      } 
-      return state;
-    })
+    // setRow((prev) => {
+    //   const state = [...prev];
+    //   while (state.length < 5) {
+    //     state.push({ ...format, values: { ...format.values } });
+    //   }
+    //   return state;
+    // });
   }, [format, fields]);
 
-  const deleteRow = (rowIndex) => {
-    setRow((prev) => {
-      const state = [...prev];
-      return state.filter((_, i) => i !== rowIndex);
-    });
-    toast.success("Row deleted successfully");
-  };
   return (
     <div className='overflow-x-auto mx-4'>
       <table className='table'>
@@ -85,13 +71,13 @@ const TableView = () => {
         <tbody>
           {row &&
             row.map((rowData, rowIndex) => (
-              <tr
-                key={rowIndex}>
+              <tr key={rowIndex}>
                 {fields &&
-                  fields.map((_, fieldIndex) => (
+                  fields.map((field, fieldIndex) => (
                     <TableInput
                       key={fieldIndex}
                       fieldIndex={fieldIndex}
+                      field={field}
                       rowIndex={rowIndex}
                       row={row}
                       setRow={setRow}
@@ -101,7 +87,15 @@ const TableView = () => {
                 <td>
                   <Trash
                     size={20}
-                    onClick={() => deleteRow(rowIndex)}
+                    onClick={() => {
+                      dispatch(
+                        deleteTableRow({
+                          tableId: activeTable?.table?._id,
+                          rowId: rowData._id
+                        })
+                      );
+                      dispatch(updateActiveTableRows({rowId:rowData._id}))
+                    }}
                     className='mt-auto cursor-pointer text-red-500 hover:text-red-700'
                   />
                 </td>
@@ -123,7 +117,11 @@ const TableView = () => {
             toast.error(_message);
             throw new Error(_message);
           }
-          setRow((prev) => [...prev, format.map((f) => ({ ...f }))]); //deep clone for reusing format
+          if (activeTable) {
+            console.log(format.values);
+            dispatch(addNewRow({ tableId: activeTable?.table?._id, format }));
+          }
+          // setRow((prev) => [...prev, {...format,values:{...format.values}}]); //deep clone for reusing format
         }}>
         New Row
       </button>

@@ -1,33 +1,26 @@
 import { useEffect, useState } from "react";
 import { useFormContext } from "../context/form.context";
 import AddOptions, { AddOptionButton } from "./AddOptions";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteTableField, updateActiveTableField } from "../store/table.store";
 
 const Options = ({ type, index }) => {
   const { fields, setFields, setActiveTab, setRow } = useFormContext();
+  const activeTable = useSelector((store) => store.table.activeTable?.table);
   const [hide, setHide] = useState(true);
   const [choice, setChoice] = useState([]);
-
+  const dispatch = useDispatch();
   //filtering attributes for different type of fields
   const isDropdown = ["multiple select", "single select"].includes(
     type.toLowerCase()
   );
 
+  console.log(fields);
   useEffect(() => {
-    if (fields[index].options?.choices) {
-      setChoice(fields[index].options.choices);
+    if (fields[index].choices) {
+      setChoice(fields[index].choices);
     }
   }, []);
-  // setting attributes for the field
-  useEffect(() => {
-    setFields((prev) => {
-      const state = [...prev];
-      state[index] = {
-        ...state[index],
-        options: isDropdown ? { default: "", choices: [] } : { default: "" }
-      };
-      return state;
-    });
-  }, [type]);
 
   const handleChange = (e) => {
     let { name, value } = e.target;
@@ -43,20 +36,37 @@ const Options = ({ type, index }) => {
       return state;
     });
   };
-  const deleteField = () => {
-    setActiveTab(null);
-    setRow((prev)=>{
-      const state = [...prev];
-      console.log("state", state);
-      const result = state.map((r)=>{
-        return r.filter((_, i) => i !== index);
-      })
-      console.log("result", result);
-      return result
-    })
-    setFields((prev) => prev.filter((_, i) => i !== index));
 
+  const deleteField = () => {
+    if(activeTable!==null){
+      console.log(activeTable)
+      dispatch(
+        deleteTableField({
+          tableId: activeTable?._id,
+          fieldId: fields[index]?._id
+        })
+      );
+      dispatch(updateActiveTableField({ fieldId: fields[index]._id }));
+    }
     
+    const val = {};
+    fields.forEach((field) => {
+      val[field.name] = val[field.default] ?? null;
+    });
+    setRow((prev) => {
+      const updatedRows = prev.map((r) => {
+        const updatedValues = {};
+        Object.keys(val).forEach((fieldName) => {
+          updatedValues[fieldName] = r.values[fieldName] || null;
+        });
+        return {
+          ...r,
+          values: updatedValues
+        };
+      });
+      return updatedRows;
+    });
+    // setActiveTab(null);
   };
   // not in use now but used in onclick of save button
 
@@ -65,13 +75,11 @@ const Options = ({ type, index }) => {
       const state = [...prev];
       state[index] = {
         ...state[index],
-        options: {
-          ...state[index].options,
-          choices: [...choice]
-        }
+        choices: [...choice]
       };
       return state;
     });
+    console.log(fields);
     setActiveTab(null);
   };
   return (
@@ -124,7 +132,7 @@ const Options = ({ type, index }) => {
       </button>
       <button
         className='btn mx-2'
-        onClick={deleteField}>
+        onClick={()=>{deleteField()}}>
         delete
       </button>
     </div>

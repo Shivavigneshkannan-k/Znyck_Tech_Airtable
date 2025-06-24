@@ -3,13 +3,14 @@ import { useEffect, useState } from "react";
 
 const SingleDropDown = ({ fieldIndex, rowIndex, updateRow }) => {
   const { fields } = useFormContext();
-  const choices = fields[fieldIndex]?.options?.choices;
+  const choices = fields[fieldIndex]?.choices;
   return (
     <div className='flex gap-2'>
       <select
-        className='select '
+        className='select'
         onChange={(e) => {
-          updateRow(e, rowIndex, fieldIndex);
+          e.target.name = fields[fieldIndex].name;
+          updateRow(e, rowIndex);
         }}>
         <option value=''>select option</option>
         {choices &&
@@ -29,30 +30,26 @@ const SingleDropDown = ({ fieldIndex, rowIndex, updateRow }) => {
 
 const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
   const { fields } = useFormContext();
-  const choices = fields[fieldIndex]?.options?.choices;
+  const choices = fields[fieldIndex]?.choices;
   const [multiChoice, setMultiChoice] = useState([]);
   useEffect(() => {
+    const fieldName = fields[fieldIndex].name;
     setRow((prev) => {
       const state = [...prev];
-      state[rowIndex][fieldIndex] = {
-        ...state[rowIndex][fieldIndex],
-        value: [...multiChoice]
-      };
+      const row = { ...state[rowIndex] };
+      row.values = { ...row.values, [fieldName]: multiChoice };
+      state[rowIndex]= row;
       return state;
     });
-    
   }, [multiChoice]);
+
   const handleMultiChoice = (e) => {
-    const checked = e.target.checked;
-    setMultiChoice((prev) => {
-      const state = [...prev];
-      if (checked) {
-        return [...state, e.target.value];
-      } else {
-        return state.filter((c) => c != e.target.value);
-      }
-    });
+    const { checked, value } = e.target;
+    setMultiChoice((prev) =>
+      checked ? [...prev, value] : prev.filter((v) => v !== value)
+    );
   };
+
   return (
     <div>
       <div className='dropdown dropdown-bottom'>
@@ -60,16 +57,16 @@ const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
           tabIndex={0}
           role='button'
           className='btn m-1 border-2 border-white relative'>
-          Multi Select ⬇️
+          Multi Select 
         </div>
         <ul
           tabIndex={0}
-          className='dropdown-content menu rounded-box z-1  shadow-sm absolute w-fit '>
-          {choices &&
+          className='dropdown-content menu rounded-box z-1 bg-base-200 w-full shadow-sm absolute '>
+          {choices && choices.length>0?
             choices.map((choice, idx) => {
               return (
                 <p
-                  className='flex gap-2 w-fit justify-center items-center my-2 '
+                  className='flex gap-2 w-fit justify-center items-center my-2'
                   key={idx}>
                   <input
                     type='checkbox'
@@ -82,28 +79,34 @@ const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
                   {choice}
                 </p>
               );
-            })}
+            }):<p>add options</p>}
         </ul>
       </div>
     </div>
   );
 };
 
-const TableInput = ({ rowIndex, fieldIndex, row, setRow }) => {
+const TableInput = ({ rowIndex, fieldIndex, row, setRow, field }) => {
   const { fields } = useFormContext();
-  const updateRow = (e, rowIndex, fieldIndex) => {
+  const updateRow = (e, rowIndex) => {
+    console.log("name", e.target.name);
+    console.log("value", e.target.value);
+    console.log("current row", row[rowIndex]);
     setRow((prev) => {
       const state = [...prev];
-      state[rowIndex][fieldIndex] = {
-        ...state[rowIndex][fieldIndex],
-        value: e.target.value
+
+      state[rowIndex].values = {
+        ...state[rowIndex].values,
+        [e.target.name]: e.target.value
       };
       return state;
     });
   };
   return fields &&
-    ["single select", "multiple select"].includes(fields[fieldIndex]?.type) ? (
-    fields[fieldIndex]?.type === "single select" ? (
+    ["single select", "multiple select"].includes(
+      fields[fieldIndex]?.dropDown
+    ) ? (
+    fields[fieldIndex]?.dropDown === "single select" ? (
       <th key={fieldIndex}>
         <SingleDropDown
           fieldIndex={fieldIndex}
@@ -129,8 +132,9 @@ const TableInput = ({ rowIndex, fieldIndex, row, setRow }) => {
         type={fields[fieldIndex].type}
         placeholder={fields[fieldIndex].type + " value"}
         className='input'
-        value={row[rowIndex][fieldIndex]?.value || ""}
-        onChange={(e) => updateRow(e, rowIndex, fieldIndex)}
+        value={row[rowIndex].values[field?.name] || ""}
+        name={fields[fieldIndex].name}
+        onChange={(e) => updateRow(e, rowIndex)}
       />
     </th>
   );

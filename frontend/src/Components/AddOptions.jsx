@@ -29,7 +29,6 @@ const AddOptions = ({ setChoice, i, choice }) => {
       return state;
     });
   };
-
   return (
     <div
       className='flex justify-start w-full items-center p-2'
@@ -39,7 +38,7 @@ const AddOptions = ({ setChoice, i, choice }) => {
         placeholder="option"
         onChange={(e) => editChoice(e, i)}
         className='input-field'
-        value={(choice[i]!==' ' || !choice[i])?choice[i]: "option"}
+        value={(choice[i]!==' ' || !choice[i])?choice[i]: ""}
       />
       <Trash
         size={15}
