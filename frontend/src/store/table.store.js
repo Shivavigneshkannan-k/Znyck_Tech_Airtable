@@ -73,7 +73,7 @@ const tableSlice = createSlice({
       toast.error(action.payload || "error in fetching active tables");
     });
     builder.addCase(addNewRow.fulfilled, (state, action) => {
-      state.activeTable.rows.push(action.payload);
+      state.activeTable.rows.push(...action.payload);
       state.error = "";
     });
     builder.addCase(addNewRow.rejected, (state, action) => {
