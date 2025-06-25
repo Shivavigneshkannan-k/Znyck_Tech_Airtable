@@ -1,5 +1,5 @@
 
-import { Link } from "react-router";
+import { Link} from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/userThunks";
 
@@ -9,9 +9,9 @@ const Navbar = () => {
   return (
     <div className='navbar shadow-sm px-4'>
       <div className='flex-1'>
-        <a className='btn btn-ghost text-xl'>
+        <Link to="/" className='btn btn-ghost text-xl'>
           AirTable
-        </a>
+        </Link>
       </div>
       {user && <p className='p-2 px-4'>Hi, {user?.username || "user"} </p>}
       <div className='flex-none'>
@@ -35,12 +35,9 @@ const Navbar = () => {
               <Link
                 to='/'
                 className='justify-between'>
-                view Tables
+                View Tables
                 <span className='badge'>New</span>
               </Link>
-            </li>
-            <li>
-              <Link to='/setting'>Settings</Link>
             </li>
             {!user ? (
               <li>

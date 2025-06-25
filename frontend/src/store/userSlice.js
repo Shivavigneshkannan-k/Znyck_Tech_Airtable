@@ -39,7 +39,7 @@ const userSlice = createSlice({
     });
     builder.addCase(getUser.rejected, (state, action) => {
       state.error = action.payload;
-      toast.error(action.payload || "error in getting user data");
+      // toast.error(action.payload || "error in getting user data");
 
     });
     builder.addCase(logout.fulfilled, (state,action) => {

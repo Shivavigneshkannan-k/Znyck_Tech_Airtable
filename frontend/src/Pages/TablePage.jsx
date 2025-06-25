@@ -3,7 +3,6 @@ import FieldTab from "../Components/FieldTab.jsx";
 import { FormContext } from "../context/form.context.js";
 import TableView from "./TableView.jsx";
 import { useDispatch, useSelector } from "react-redux";
-import toast from "react-hot-toast";
 import { useParams } from "react-router";
 import { getTable, addNewField, saveAll } from "../store/tableThunk.js";
 
@@ -29,19 +28,17 @@ const TablePage = () => {
       setFields(activeTable?.table?.fields || []);
       setTableName(activeTable?.table.name || "");
     }
-    
   }, [activeTable, activeTab?.table?.fields]);
 
   const saveTable = () => {
     dispatch(
       saveAll({ tableId: activeTable.table._id, fields, rows: row, tableName })
     );
-    toast.success("Table saved successfully");
   };
   return (
-    <div className='p-5 '>
+    <div className=''>
       <form
-        className='m-5 p-4 rounded-lg shadow-2xl relative'
+        className='p-4 rounded-lg shadow-2xl relative'
         onSubmit={(e) => e.preventDefault()}>
         <div className=' flex justify-center items-center '>
           <input
@@ -50,13 +47,22 @@ const TablePage = () => {
             value={tableName}
             onChange={(e) => setTableName(e.target.value)}
           />
+          <div className="absolute right-2 flex gap-2 justify-center items-center">
           <button
-            className='btn btn-active absolute right-2'
+            className='btn my-2 bg-blue-600 active:bg-blue-500'
+            onClick={() => {
+              dispatch(addNewField({ tableId: activeTable?.table?._id }));
+            }}>
+            Add Field
+          </button>
+          <button
+            className='btn bg-green-600 active:bg-green-500'
             onClick={() => {
               saveTable();
             }}>
             Save
           </button>
+          </div>
         </div>
 
         {activeTab !== null && (
@@ -79,13 +85,7 @@ const TablePage = () => {
             <TableView />
           </FormContext.Provider>
 
-          <button
-            className='btn my-2'
-            onClick={() => {
-              dispatch(addNewField({ tableId: activeTable?.table?._id }));
-            }}>
-            Add Field
-          </button>
+          
         </div>
       </form>
     </div>

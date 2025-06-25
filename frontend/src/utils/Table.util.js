@@ -1,6 +1,5 @@
 import { nanoid } from "nanoid";
-import { addToUpdateFields } from "../store/table.store";
-export const handleFieldChange = (e, index, setFields, dispatch, fieldId) => {
+export const handleFieldChange = (e, index, setFields) => {
   const { name, type, value, checked } = e.target;
   setFields((prev) => {
     const state = [...prev];
@@ -20,8 +19,6 @@ export const handleFieldChange = (e, index, setFields, dispatch, fieldId) => {
         dropDown: null
       };
     }
-    console.log(state);
-    dispatch(addToUpdateFields({ fieldId, fieldData: state[index] }));
     return state;
   });
 };
@@ -52,22 +49,6 @@ export const fieldFormat = {
   options: {}
 };
 
-// adding new field into the table
-export const addNewField = (fields, setFields) => {
-  setFields((prev) => {
-    return [
-      ...prev,
-      {
-        name: "",
-        type: "text",
-        required: false,
-        unique: false,
-        fieldId: nanoid(),
-        options: {}
-      }
-    ];
-  });
-};
 
 export const filterOption = (type) =>
   Object.keys(options).filter((option) => {

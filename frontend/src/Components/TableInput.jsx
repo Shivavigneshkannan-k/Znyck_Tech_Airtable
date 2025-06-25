@@ -1,18 +1,25 @@
 import { useFormContext } from "../context/form.context";
 import { useEffect, useState } from "react";
 
-const SingleDropDown = ({ fieldIndex, rowIndex, updateRow }) => {
+const SingleDropDown = ({ fieldIndex, rowIndex, updateRow, row }) => {
   const { fields } = useFormContext();
   const choices = fields[fieldIndex]?.choices;
+  const fieldName = fields[fieldIndex].name;
+  let selectedValue = row?.values?.[fieldName] || "";
   return (
     <div className='flex gap-2'>
       <select
-        className='select'
+        className='bg-base-100 px-2 py-1 w-fit'
+        value={selectedValue}
         onChange={(e) => {
           e.target.name = fields[fieldIndex].name;
           updateRow(e, rowIndex);
         }}>
-        <option value=''>select option</option>
+        <option
+          value={""}
+          disabled>
+          {row[rowIndex].values[fieldName] || "select option"}
+        </option>
         {choices &&
           choices.map((choice, idx) => {
             return (
@@ -28,13 +35,14 @@ const SingleDropDown = ({ fieldIndex, rowIndex, updateRow }) => {
   );
 };
 
-const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
+const MultipleDropDown = ({ fieldIndex, rowIndex, setRow, row }) => {
   const { fields } = useFormContext();
   const choices = fields[fieldIndex]?.choices;
-  const [multiChoice, setMultiChoice] = useState([]);
+  const fieldName = fields[fieldIndex].name;
+  const selectedValues = row[rowIndex].values[fieldName]
+  const [multiChoice, setMultiChoice] = useState(selectedValues||[]);
+  console.log("multi",multiChoice)
   useEffect(() => {
-    console.log("multiple select");
-    
     const fieldName = fields[fieldIndex].name;
     setRow((prev) => {
       const state = [...prev];
@@ -55,10 +63,14 @@ const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
   return (
     <div>
       <div className='dropdown dropdown-bottom'>
+        <div>
+          
+        {multiChoice&& multiChoice.map(choice=><span className="text-xs bg-amber-500 m-0.5 mx-1 w-fit py-0.5 px-1 text-">{choice}</span>)}
+        </div>
         <div
           tabIndex={0}
           role='button'
-          className='btn m-1 border-2 border-white relative'>
+          className='btn m-1 border-2 border-white relative w-fit'>
           Multi Select
         </div>
         <ul
@@ -72,6 +84,7 @@ const MultipleDropDown = ({ fieldIndex, rowIndex, setRow }) => {
                   key={idx}>
                   <input
                     type='checkbox'
+                    checked={row[rowIndex]?.values[fieldName]?.includes(choice) }
                     className='checkbox'
                     value={choice}
                     onChange={(e) => {
@@ -134,11 +147,13 @@ const TableInput = ({ rowIndex, fieldIndex, row, setRow, field }) => {
       </th>
     )
   ) : (
-    <th key={fieldIndex}>
+    <th
+      key={fieldIndex}
+      className=' w-fit p-1'>
       <input
         type={fields[fieldIndex].type}
         placeholder={fields[fieldIndex].type + " value"}
-        className='input'
+        className='outline-0 border-0 p-1'
         value={row[rowIndex].values[field?.name] || ""}
         name={fields[fieldIndex].name}
         onChange={(e) => updateRow(e, rowIndex)}

@@ -1,10 +1,9 @@
 import { Mail, UserRound, KeyRound } from "lucide-react";
 import SidePanel from "../Components/Sidepanel";
-import { useDispatch } from "react-redux";
-import { useState } from "react";
+import { useDispatch} from "react-redux";
+import {useState } from "react";
 import toast from "react-hot-toast";
 import { login } from "../store/userThunks";
-import { Link} from "react-router";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -12,21 +11,21 @@ const Login = () => {
     emailId: "",
     password: ""
   });
-
-  const handleLogin =async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    const {emailId,password} = formData || {};
-    console.log(formData)
-    if([emailId,password].some(field => field.trim()==="")){
+    const { emailId, password } = formData || {};
+    console.log(formData);
+    if ([emailId, password].some((field) => field.trim() === "")) {
       return toast.error("All fields are required!!!");
-    }dispatch(login(formData));
-    
+    }
+    dispatch(login(formData));
   };
-  const handleChange = (e)=>{
-    setFormData(prev =>({
-      ...prev,[e.target.name]: e.target.value
-    }))
-  }
+  const handleChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
   return (
     <div className='flex  items-center justify-center gap-10 h-[calc(100vh-20vh)] w-full'>
       <div className='lg:w-1/2 lg:block hidden'>
@@ -42,8 +41,10 @@ const Login = () => {
           <input
             type='email'
             placeholder='xyz@email.com'
-            name="emailId"
-            onChange={(e)=>{handleChange(e)}}
+            name='emailId'
+            onChange={(e) => {
+              handleChange(e);
+            }}
             value={formData.emailId}
             className='input w-full mb-4'
           />
@@ -54,9 +55,11 @@ const Login = () => {
           <input
             type='password'
             placeholder='*******'
-            name="password"
+            name='password'
             value={formData.password}
-            onChange={(e)=>{handleChange(e)}}
+            onChange={(e) => {
+              handleChange(e);
+            }}
             className='input w-full mb-4'
           />
         </div>
@@ -67,7 +70,14 @@ const Login = () => {
           }}>
           Login
         </button>
-        <p className="text-center py-4">Don't have an account? <Link to="/signup" className="cursor-pointer hover:underline">Register Now</Link></p>
+        <p className='text-center py-4'>
+          Don't have an account?{" "}
+          <Link
+            to='/signup'
+            className='cursor-pointer hover:underline'>
+            Register Now
+          </Link>
+        </p>
       </form>
     </div>
   );

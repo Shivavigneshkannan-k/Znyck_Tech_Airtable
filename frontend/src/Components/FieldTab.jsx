@@ -1,12 +1,10 @@
 import Options from "./Options";
 import { fieldTypes, handleFieldChange } from "../utils/Table.util";
 import { useFormContext } from "../context/form.context";
-import { useDispatch } from "react-redux";
 
 const FieldTab = ({ index }) => {
   const { setFields, fields } = useFormContext();
   const field = fields[index];
-  const dispatch = useDispatch();
 
   return (
     <div className=' rounded-lg p-5 top-[1/2] right-[1/2] my-2 shadow-md '>
@@ -17,25 +15,26 @@ const FieldTab = ({ index }) => {
           name='name'
           value={field.name}
           onChange={(e) => {
-            handleFieldChange(e, index, setFields, dispatch, fields[index]._id);
+            handleFieldChange(e, index, setFields);
           }}
           placeholder={field.name || `Field ${index + 1}`}
         />
         <div>
-          {fields[index].dropDown && <p className="text-center py-1">{fields[index].dropDown}</p>}
+          {fields[index].dropDown && <p className="text-center py-1">{fields[index].dropDown} </p>}
+          
           <select
             className=' border px-4 py-1 bg-base-200'
             name='type'
             value={field.type}
+            defaultValue={fields[index].type}
             onChange={(e) => {
               handleFieldChange(
                 e,
                 index,
-                setFields,
-                dispatch,
-                fields[index]._id
+                setFields
               );
             }}>
+            <option value={fields[index].type} disabled>{fields[index].type}</option>
             {fieldTypes &&
               fieldTypes.map((type, idx) => (
                 <option
@@ -56,9 +55,7 @@ const FieldTab = ({ index }) => {
               handleFieldChange(
                 e,
                 index,
-                setFields,
-                dispatch,
-                fields[index]._id
+                setFields
               );
             }}
           />{" "}
@@ -74,9 +71,7 @@ const FieldTab = ({ index }) => {
               handleFieldChange(
                 e,
                 index,
-                setFields,
-                dispatch,
-                fields[index]._id
+                setFields
               );
             }}
           />{" "}

@@ -21,32 +21,32 @@ const TableView = () => {
     }
   }, [fields, activeTable]);
 
- useEffect(() => {
-  if (!format?.values || !Array.isArray(row)) return;
+  useEffect(() => {
+    if (!format?.values || !Array.isArray(row)) return;
 
-  setRow((prev) => {
-    return prev.map((r) => {
-      const updatedValues = { ...r.values }; // don't discard existing values
-      Object.keys(format.values).forEach((fieldName) => {
-        if (!(fieldName in updatedValues)) {
-          updatedValues[fieldName] = null; // add only missing fields
-        }
+    setRow((prev) => {
+      return prev.map((r) => {
+        const updatedValues = { ...r.values }; // don't discard existing values
+        Object.keys(format.values).forEach((fieldName) => {
+          if (!(fieldName in updatedValues)) {
+            updatedValues[fieldName] = null; // add only missing fields
+          }
+        });
+        return {
+          ...r,
+          values: updatedValues
+        };
       });
-      return {
-        ...r,
-        values: updatedValues,
-      };
     });
-  });
-}, [format]);
-
+  }, [format]);
 
   return (
-    <div className='overflow-x-auto mx-4'>
+    <div className='overflow-x-auto mx-auto'>
       <table className='table'>
         {/* head */}
         <thead>
           <tr>
+            <th></th>
             {fields &&
               fields.map((field, i) => {
                 return (
@@ -55,7 +55,7 @@ const TableView = () => {
                     onClick={() => {
                       setActiveTab(i);
                     }}>
-                    <span className='flex gap-2 items-center justify-center'>
+                    <span className='flex gap-2 items-center'>
                       {field.name || "Field " + (i + 1)} <Pencil size={15} />
                     </span>
                   </th>
@@ -67,6 +67,21 @@ const TableView = () => {
           {row &&
             row.map((rowData, rowIndex) => (
               <tr key={rowIndex}>
+                <td>
+                  <Trash
+                    size={20}
+                    onClick={() => {
+                      dispatch(
+                        deleteTableRow({
+                          tableId: activeTable?.table?._id,
+                          rowId: rowData._id
+                        })
+                      );
+                      dispatch(updateActiveTableRows({ rowId: rowData._id }));
+                    }}
+                    className='mt-auto cursor-pointer text-red-500 hover:text-red-700'
+                  />
+                </td>
                 {fields &&
                   fields.map((field, fieldIndex) => (
                     <TableInput
@@ -78,28 +93,12 @@ const TableView = () => {
                       setRow={setRow}
                     />
                   ))}
-
-                <td>
-                  <Trash
-                    size={20}
-                    onClick={() => {
-                      dispatch(
-                        deleteTableRow({
-                          tableId: activeTable?.table?._id,
-                          rowId: rowData._id
-                        })
-                      );
-                      dispatch(updateActiveTableRows({rowId:rowData._id}))
-                    }}
-                    className='mt-auto cursor-pointer text-red-500 hover:text-red-700'
-                  />
-                </td>
               </tr>
             ))}
         </tbody>
       </table>
       <button
-        className='btn'
+        className='btn my-2 bg-blue-600 active:bg-blue-500'
         onClick={(e) => {
           e.preventDefault();
           if (
